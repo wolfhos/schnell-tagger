@@ -39,12 +39,12 @@ Diese Funktion lässt sich in der Datei *script.js* deaktivieren:
 * Für den Betrieb sind ein Webserver und PHP erforderlich
 * Ein Webserver darf sicherheitstechnisch prinzipiell nur auf die Dateien innerhalb von *Document Root* zugreifen, deswegen müssen die zu bearbeitenden Bilder auch in diesem oder einem Unterverzeichnis liegen. 
 * Document Root und die Konstante *startverzeichnis* im Skript *script.js* müssen übereinstimmen. Bei Apache findet sich die Konfiguration von *Document Root* in der Datei *httpd.conf*. Im Detail: 
-    * Im JavaScirpt: `const startverzeichnis: string = 'C:/schnell-tagger/code';`
+    * Im JavaScirpt: `const startverzeichnis = 'C:/schnell-tagger/code';`
     * In der Webserver-Konfiguration:
         * `DocumentRoot "C:/schnell-tagger/code"`
         * `<Directory "C:/schnell-tagger/code">`
 * Wer die Datei *index.html* anders benennt, beispielsweise als Teil einer größeren Anwendung, muss den zugehörigen Eintrag in *script.js* ändern, wegen der Funktion des Back-Buttons des Browsers. Hier fehlt noch eine automatische Erkennung.
-    * `const dateiHistory: string = "./index_xyz.html";`
+    * `const dateiHistory = "./index_xyz.html";`
 
 ## Was fehlt noch?
 * Bereits in den Skripten ist angelegt, dass Anwender einen Urheber in die Metadaten der Bilder eintragen können. Das funktioniert noch nicht
