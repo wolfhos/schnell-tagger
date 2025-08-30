@@ -31,8 +31,8 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 Standardmäßig ist eine Funktion für Sicherheitskopien aktiv, da Bilder beim Schreiben kaputt gehen können, wenn das Skript beim Schreibvorgang gestört wird, (fremder Zugriff auf die Datei, Serverabsturz o.ä.). Die Kopien landen in einem Unterordner *schnell-tagger_sec...*. Erst dann beginnt der Schreibvorgang.
 
 Diese Funktion lässt sich in der Datei *script.js* deaktivieren: 
-* `const sicherheitskopien: boolean = true;` //eingeschaltet (Voreinstellung)
-* `const sicherheitskopien: boolean = false;` //ausgeschaltet
+* `const sicherheitskopien = true;` //eingeschaltet (Voreinstellung)
+* `const sicherheitskopien = false;` //ausgeschaltet
 
 ## Installieren
 
