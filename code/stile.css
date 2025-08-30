@@ -1,0 +1,164 @@
+ .flex-container {
+
+     display: flex;
+     height: 30.5em;
+
+ }
+
+
+ .box1 {
+     flex-basis: 19em;
+     order: 1;
+     padding: 0.3em;
+     margin: 0.3em;
+     border: 0.1em solid #6d6c6c;
+     overflow: auto;
+     z-index: 2;
+
+ }
+
+
+ .box2 {
+     flex-basis: 40em;
+     order: 2;
+     padding: 0.3em;
+     margin: 0.3em;
+     background-color: #bebebe;
+     border: 0.1em solid #a1a1a1;
+     overflow: auto;
+
+ }
+
+ .box3 {
+     flex-basis: 22em;
+     order: 3;
+     border: 0.1em solid #6d6c6c;
+     padding: 0.3em;
+     margin: 0.3em;
+     overflow: auto;
+
+
+ }
+
+ .bild {
+
+     width: 12em;
+     padding: 0.3em;
+     transform: scale(1);
+     z-index: 1;
+ }
+
+ .bild:hover {
+
+     width: 12em;
+     padding: 0.3em;
+     transform: scale(2);
+     position: relative;
+     z-index: 2;
+ }
+
+ .ordner {
+
+     padding-left: 1em;
+     margin-bottom: -0.8em;
+
+ }
+
+ .ordner:hover {
+
+     background-color: #bebebe;
+
+ }
+
+ #markieren_tabelle {
+
+     border: 0.1em solid #000000;
+     background-color: #ffffff;
+
+
+ }
+
+ #schalterAlle,
+ #schalterKeins {
+     border: 0.01em solid #000000;
+     text-align: center;
+     padding: 0.2em;
+     background-color: #bebebe;
+     width: 9em;
+     font-weight: bold;
+
+ }
+
+
+ #schalterAlle:hover,
+ #schalterKeins:hover {
+
+     background-color: #858282
+ }
+
+ #nachricht_markiert {
+
+     text-align: center;
+     padding: 0.2em;
+     width: 9em;
+
+ }
+
+ #go_tabelle {
+     border: 0.1em solid #000000;
+     background-color: #bebebe;
+
+ }
+
+
+ #go {
+     text-align: center;
+     border: 0.01em solid #000000;
+     width: 2em;
+     height: 2em;
+     background-color: white;
+
+ }
+
+ #go:hover {
+     background-color: #858282
+ }
+
+ #eingabe {
+
+     width: 15em;
+     height: 2em;
+     border: 0.01em solid #000000;
+     margin: 0em;
+     outline: none;
+
+ }
+
+ #laden {
+
+     color: red;
+ }
+
+ #ordnerfeld {
+     font-weight: bold;
+ }
+
+ #back {
+     font-weight: bold;
+
+ }
+
+ a {
+     text-decoration: none;
+     color: black;
+ }
+
+ a:visited,
+ a:active {
+     text-decoration: none;
+     color: black
+ }
+
+ a:hover {
+     background-color: #bebebe;
+ }
