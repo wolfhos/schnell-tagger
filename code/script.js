@@ -4,7 +4,7 @@
 */
 console.log('Schnell-Tagger Version 0.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
 //Konfiguration hier ändern
-const startverzeichnis = 'C:/schnell-tagger/code'; //Muss mit dem Document Root des Webserversübereinstimmen 
+const startverzeichnis = 'e:/web'; //Muss mit dem Document Root des Webserversübereinstimmen 
 const dateiHistory = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
 const sicherheitskopien = true; //Sollen Sicherheitskopien gemacht werden? Voreinstellung ist ja (true)
 const urheber = false; //Urhebereintrag in den Bildern? Siehe Readme.//Achtung funktioniert noch nicht!
