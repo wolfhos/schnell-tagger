@@ -1,5 +1,6 @@
 /*
-
+geändert bis zur nächsten Version
+- Eingabefeld wird geleert, wenn es angeklickt wird
 
 */
 console.log('Schnell-Tagger Version 0.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
@@ -414,6 +415,10 @@ class Initiierung {
             });
             initiierung._rahmenMitte._markierteBilder = []; //Alle Bilder werden demarkiert
             initiierung._rahmenRechts.stichworteAnzeigen(); //.. und angezeigt
+        });
+        let listenerEingabefleld = document.getElementById('eingabe');
+        listenerEingabefleld.addEventListener('click', function (event) {
+            listenerEingabefleld.value = ""; //Eingabefeld wird geleert, wenn es angeklickt wird
         });
     }
 }

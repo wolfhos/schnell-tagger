@@ -1,5 +1,6 @@
 /*
-
+geändert bis zur nächsten Version
+- Eingabefeld wird geleert, wenn es angeklickt wird
 
 */
 
@@ -88,7 +89,7 @@ class AktuellesVerzeichnis {
                     })
                     .then((bilder) => { return true; }); // Erfolgreicher Abschluss
             })
-            
+
     }
 
 
@@ -222,7 +223,7 @@ class RahmenLinks {
         initiierung._rahmenRechts._stichwortNeu = '';
         initiierung._rahmenRechts._bilderNurNamen = [];
 
-    
+
         //Unterverzeichnisse neu holen
         let ergebnis = await initiierung._aktuellesVerzeichnis.dateienVomServerHolen();
 
@@ -451,7 +452,7 @@ class RahmenRechts {
                     }
                     console.log('HTTP-Status metasetzen: ' + response.status);
 
-                    return response.json(); 
+                    return response.json();
                 })
 
                 .then(data => {
@@ -547,12 +548,12 @@ class Initiierung {
     //Methode Start
     async start() {
 
-  
+
         //Teil 1: Erste Füllung: Unterordner und Bilder vom Server holen
         //----------------
 
         let ergebnis = await this._aktuellesVerzeichnis.dateienVomServerHolen();
-        
+
 
         //Ergebnisse anzeigen
         if (ergebnis) {
@@ -659,11 +660,11 @@ class Initiierung {
                 bildElement.style.border = '2px solid red'; //Alle werden hübsch rot umrandet...
             });
 
-            
+
             initiierung._rahmenRechts.stichworteAnzeigen(); //.. und angezeigt
 
             console.log('Markierte Bilder: ' + JSON.stringify(initiierung._rahmenMitte._markierteBilder) + ' Anzahl: ' + initiierung._rahmenMitte._markierteBilder.length);
-           
+
 
         });
 
@@ -679,6 +680,17 @@ class Initiierung {
             initiierung._rahmenRechts.stichworteAnzeigen(); //.. und angezeigt
 
         });
+
+        let listenerEingabefleld: any = document.getElementById('eingabe');
+
+        listenerEingabefleld.addEventListener('click', function (event) {
+
+
+            listenerEingabefleld.value = ""; //Eingabefeld wird geleert, wenn es angeklickt wird
+
+
+        });
+
 
 
 
