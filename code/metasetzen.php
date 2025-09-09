@@ -36,31 +36,22 @@ foreach ($uebergabe as $z => $element) {
 
 
 
-//wenn Sicherheitskopien gewünscht sind, wird ein entsprchendes Verzeichnis erstellt
+//wenn Sicherheitskopien gewünscht sind, wird ein entsprechendes Verzeichnis erstellt
 if ($sicherheitskopieJaNein == "true") {
 
+    $verzeichnisname = ".\schnell-tagger_sec";
+    if (!file_exists($verzeichnisname)) mkdir($verzeichnisname);
+    
+    //für die Namenserweiterung der Kopien mit Datum, Uhrzeit und Zufallszahl
     $zeit = time();
-    $namenserweiterungDatum = date("Ymd_His", $zeit); //Verzeichnisname mit Datum und Uhrzeit
-    $verzeichnisname = ".\schnell-tagger_sec" . $namenserweiterungDatum;
-    if (!file_exists($verzeichnisname)) {
-        mkdir($verzeichnisname);
-    } else {
-        $verzeichnisname = $verzeichnisname . "_" . rand(1, 100000000); //falls das vorhanden, noch mit Zufallszahl
-        if (!file_exists($verzeichnisname)) {
-            mkdir($verzeichnisname);
-        } else {
-            echo json_encode(["Fehler: Verzeichnis konnte nicht erstellt werden"]); //Wenn gar nicht geht, dann Abbruch
-            exit;
-        }
-    }
-
+    $namenserweiterung = date("Ymd_His", $zeit) . "_" . rand(1, 100000); 
+    
+    
     //Jede Datei wird kopiert
     foreach ($bildNamen as $bild) {
 
-
         $quelle = $bild;
-        $ziel = $verzeichnisname . "\\" . basename($bild); // Nur Dateiname ohne Pfad
-
+        $ziel = $verzeichnisname . "\\" . basename($bild) . "_$namenserweiterung" ;
         copy($quelle, $ziel);
     }
 }

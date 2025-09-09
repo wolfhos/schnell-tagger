@@ -1,6 +1,8 @@
 /*
 geändert bis zur nächsten Version
 - Eingabefeld wird geleert, wenn es angeklickt wird
+- Sicherheitskopien werden nur in einem Verzeichnis gespeichert
+- Verzeichnis mit Sicherheitskopien schnell-tagger_sec wird nicht mehr angezeigt
 
 */
 
@@ -191,6 +193,9 @@ class RahmenLinks {
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._unterverzeichnisse.forEach((einOrdner: string) => {
 
+            console.log('Bug Ordner: ' + einOrdner);
+
+            if (einOrdner != 'schnell-tagger_sec')  //Das Sicherheitskopienverzeichnis wird nicht angezeigt
             htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
 
         });

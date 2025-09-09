@@ -1,6 +1,8 @@
 /*
 geändert bis zur nächsten Version
 - Eingabefeld wird geleert, wenn es angeklickt wird
+- Sicherheitskopien werden nur in einem Verzeichnis gespeichert
+- Verzeichnis mit Sicherheitskopien schnell-tagger_sec wird nicht mehr angezeigt
 
 */
 console.log('Schnell-Tagger Version 0.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
@@ -118,7 +120,9 @@ class RahmenLinks {
         }
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._unterverzeichnisse.forEach((einOrdner) => {
-            htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
+            console.log('Bug Ordner: ' + einOrdner);
+            if (einOrdner != 'schnell-tagger_sec') //Das Sicherheitskopienverzeichnis wird nicht angezeigt
+                htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
         });
         //erst das aktuelle Verzeichnis fett anzeigen
         let anzeigeLinksVerzeichnis = document.getElementById("ordnerfeld"); //
