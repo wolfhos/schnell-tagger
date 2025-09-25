@@ -574,7 +574,7 @@ class Initiierung {
         //----------------
 
         //Listener für den Back-Button des Browsers
-        window.addEventListener("popstate", (event) => {
+        window.addEventListener("popstate", (event : any) => {
 
 
             initiierung._rahmenLinks.verzeichnisNeuEinlesen(initiierung._aktuellesVerzeichnis._vorherigesVerzeichnis); //Bei einem Back-Button wird das vorherige Verzeichnis neu eingelesen
@@ -584,7 +584,7 @@ class Initiierung {
 
 
         //Listener Abfragen der Strg-Taste
-        document.addEventListener("keydown", function (event) {
+        document.addEventListener("keydown", function (event : any) {
 
             if (event.key == 'Control') {
                 initiierung._strgJaNein = true;
@@ -592,7 +592,7 @@ class Initiierung {
 
 
         });
-        document.addEventListener("keyup", (event) => {
+        document.addEventListener("keyup", (event : any) => {
 
 
             if (event.key == 'Control') {
@@ -606,7 +606,7 @@ class Initiierung {
         //Listener: Klick auf RahmenMitte für das Markieren der Bilder 
         let listenerBilder: any = document.getElementById('bilderfeldeinzeln');
 
-        listenerBilder.addEventListener('click', function (event) {
+        listenerBilder.addEventListener('click', function (event : any) {
 
 
             if (event.target.attributes.src && event.target.attributes.src.value != undefined) {
@@ -622,7 +622,7 @@ class Initiierung {
         knopf.addEventListener("click", initiierung._rahmenRechts.goButton);
 
         //...und für die Entertaste
-        document.addEventListener("keyup", (event) => {
+        document.addEventListener("keyup", (event : any) => {
             if (event.key === "Enter") {
 
                 initiierung._rahmenRechts.goButton(); //Enter-Taste löst den Go-Button aus
@@ -633,7 +633,7 @@ class Initiierung {
 
         //Listener für die Verzeichnisse. Mit Klick Verzeichniswechsel
         let listenerVerzeichnisse: any = document.getElementById('ordnerfeldeinzeln');
-        listenerVerzeichnisse.addEventListener('click', async function (event) {
+        listenerVerzeichnisse.addEventListener('click', async function (event : any) {
 
             let ordnerGeklickt: string = event.target.innerHTML; //Der Name des Unterordners
             let neuerPfad: string = '';
@@ -656,7 +656,7 @@ class Initiierung {
 
         //Listener für den Button Alles markieren
         let listenerAllesMarkieren: any = document.getElementById('schalterAlle');
-        listenerAllesMarkieren.addEventListener('click', function (event) {
+        listenerAllesMarkieren.addEventListener('click', function (event : any) {
 
 
             initiierung._rahmenMitte._markierteBilder = initiierung._aktuellesVerzeichnis._bilder; //Alle Bilder werden markiert
@@ -675,7 +675,7 @@ class Initiierung {
 
         //Listener für den Button Nichts markieren
         let listenerNichtsMarkieren: any = document.getElementById('schalterKeins');
-        listenerNichtsMarkieren.addEventListener('click', function (event) {
+        listenerNichtsMarkieren.addEventListener('click', function (event : any) {
 
             initiierung._aktuellesVerzeichnis._bilder.forEach(element => {
                 let bildElement: any = document.getElementById(element._id);
@@ -688,7 +688,7 @@ class Initiierung {
 
         let listenerEingabefleld: any = document.getElementById('eingabe');
 
-        listenerEingabefleld.addEventListener('click', function (event) {
+        listenerEingabefleld.addEventListener('click', function (event : any) {
 
 
             listenerEingabefleld.value = ""; //Eingabefeld wird geleert, wenn es angeklickt wird
