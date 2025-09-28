@@ -62,6 +62,7 @@ foreach ($bildNamen as $z2 => $bild) {
 
     echo "<br><br>";
 
+    $zumEinbetten = "";
 
     //Durchlauf durch alle Felder
     foreach ($alleFelder as $feld) {
@@ -71,6 +72,8 @@ foreach ($bildNamen as $z2 => $bild) {
         //Überprüfung, ob das Feld in der INI-Datei vorkommt
         if (isset($ini_array["IPTC-Felder"][$feld])) {
 
+
+
             echo "<br>Feld $feld ist in der INI-Datei<br>";
 
             //Sonderfall UTF-8
@@ -78,9 +81,14 @@ foreach ($bildNamen as $z2 => $bild) {
                 $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
                 echo "<br>Sonderfall UTF-8<br>";
 
-            }
+            } elseif ($feld == "2#025") {
 
-            else $feldNeu[] = $ini_array["IPTC-Felder"][$feld];
+                echo "<br><b>2#25</b><br>";
+                $feldNeu[] = "";
+
+            }
+            else   $feldNeu[] = $ini_array["IPTC-Felder"][$feld];
+            
 
 
 
@@ -89,7 +97,7 @@ foreach ($bildNamen as $z2 => $bild) {
 
         } else {
 
-            echo "<br>Feld $feld ist NICHT in der INI-Datei<br>";
+            // echo "<br>Feld $feld ist NICHT in der INI-Datei<br>";
 
             //Überprüfung, ob das Feld im Header der ersten Datei vorkommt
             if (isset($iptcOriginal[$feld])) {
@@ -97,26 +105,21 @@ foreach ($bildNamen as $z2 => $bild) {
                 echo "Feld $feld ist im Header der ersten Datei vorhanden<br>";
                 echo "Wert: ";
                 var_dump($iptcOriginal[$feld]);
-                
+
                 //Sonderfall UTF-8
-            if ($feld == "1#090" && $ini_array["IPTC-Felder"][$feld] == "true") {
-                $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
-                echo "<br>Sonderfall UTF-8<br>";
+                if ($feld == "1#090" && $ini_array["IPTC-Felder"][$feld] == "true") {
+                    $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
+                    echo "<br>Sonderfall UTF-8<br>";
 
-            }
-
-            else $feldNeu = $iptcOriginal[$feld]; //Der erste Wert wird übernommen, wenn das Feld in der INI-Datei nicht vorkommt
+                } else
+                    $feldNeu = $iptcOriginal[$feld]; //Der erste Wert wird übernommen, wenn das Feld in der INI-Datei nicht vorkommt
 
             } else {
 
-                echo "Feld $feld ist im Header der ersten Datei NICHT vorhanden<br>";
+                //echo "Feld $feld ist im Header der ersten Datei NICHT vorhanden<br>";
             }
 
         }
-
-        echo "<br>Neuer Wert für Feld<br>";
-        var_dump($feldNeu);
-        echo "<br>";
 
         //Sonderfall Stichwort 2#025
         if ($feld == "2#025") {
@@ -124,16 +127,46 @@ foreach ($bildNamen as $z2 => $bild) {
             if (in_array($neuesStichwort, $feldNeu) == false)
                 $feldNeu[] = $neuesStichwort;
 
-            echo "<br>Sonderfall Neuer Wert für Stichwörter<br>";
-            var_dump($feldNeu);
-            echo "<br>";
 
         }
 
+        if ($feldNeu != []) {
+            echo "<br>Neuer Wert für Feld<br>";
+            var_dump($feldNeu);
+            echo "<br>";
+
+            //Nun wird der binäre Code zum Einbetten in die Bilddatei erzeugt
+
+            $abschnitt = (int) substr($feld, 0, 1);
+            $unterabschnitt = (int) substr($feld, 2, 3);
+
+            echo "<br>Abschnitt: $abschnitt Unterabschnitt: $unterabschnitt<br>";
+
+            foreach ($feldNeu as $i1) {
+                $laenge = strlen($i1);
+                $zumEinbetten .= chr(0x1c) . chr($abschnitt) . chr($unterabschnitt) . chr($laenge >> 8) . chr($laenge & 0xff) . $i1; //
+            }
+        }
 
 
 
     }
 
+    echo "<br>Zum Einbetten: $zumEinbetten<br>";
 
+
+    $modus = 0;
+
+
+    $bildMitNeuenTags = iptcembed($zumEinbetten, $bild, $modus); //Rückgabe: Ein Bild mit den neuen Tags
+
+
+    //Nun schreiben wir das neue Bild in eine neue Datei
+    $datei = fopen($bild, "w");
+    $writeist = fwrite($datei, $bildMitNeuenTags);
+    fclose($datei);
 }
+
+
+
+
