@@ -1,0 +1,139 @@
+<?php
+
+//Skript fügt das neue Stichwort den IPTC-Daten der Bilder hinzu
+//---------------------------------------------------------------
+
+// error_reporting(0); //Fehlermeldungen abschalten
+
+$uebergabe = ["true", "false", "Test neu", "C:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2256.jpg", "C:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2261.jpg"];
+
+//Die Übergabe wird zerlegt
+foreach ($uebergabe as $z => $element) {
+
+    switch ($z) {
+        case 1: //Urheber Ja Nein?
+            $urheberJaNein = $element;
+            break;
+        case 0: //Sicherheitskopie Ja Nein?
+            $sicherheitskopieJaNein = $element;
+            break;
+        case 2: //Das neue Stichwort
+            $neuesStichwort = $element;
+            break;
+        default: //Die Liste der Bildnamen
+            $bildNamen[] = $element;
+            break;
+    }
+}
+
+
+//Die Liste aller möblichen IPTC-Felder laut https://de.wikipedia.org/wiki/IPTC-IIM-Standard
+
+echo "Alle möglichen IPTC-Felder:<br>";
+$alleFelder = array("1#020", "1#090", "2#005", "2#007", "2#010", "2#015", "2#020", "2#025", "2#040", "2#055", "2#060", "2#062", "2#063", "2#065", "2#080", "2#085", "2#090", "2#092", "2#095", "2#100", "2#101", "2#103", "2#105", "2#110", "2#115", "2#116", "2#118", "2#120", "2#122");
+
+var_dump($alleFelder);
+
+echo "<br><br>";
+echo "Die IPTC-Felder aus der  INI-Datei:<br>";
+
+//Die Felder aus der INI-Datei werden ausgelesen 
+$ini_array = parse_ini_file("Felder.ini", true);
+var_dump($ini_array);
+
+echo "<br><br>";
+
+foreach ($bildNamen as $z2 => $bild) {
+
+
+    echo "<br><br><b>Bild</b> $z2: $bild<br>";
+    //Den vorhandenen IPTC-Header auslesen
+    $getSizeAuslesen = getimagesize($bild, $getSizeIPTC); //getimagesize liefert mit dem zweiten Parameter ($info) die IPTC-Daten
+    if (isset($getSizeIPTC["APP13"])) {
+
+        $iptcOriginal = iptcparse($getSizeIPTC["APP13"]);
+    }
+
+
+
+    echo "<br><br>";
+    echo "Felder aus dem Header der ersten Datei:<br>";
+    var_dump($iptcOriginal);
+
+    echo "<br><br>";
+
+
+    //Durchlauf durch alle Felder
+    foreach ($alleFelder as $feld) {
+
+        $feldNeu = [];
+
+        //Überprüfung, ob das Feld in der INI-Datei vorkommt
+        if (isset($ini_array["IPTC-Felder"][$feld])) {
+
+            echo "<br>Feld $feld ist in der INI-Datei<br>";
+
+            //Sonderfall UTF-8
+            if ($feld == "1#090" && $ini_array["IPTC-Felder"][$feld] == "true") {
+                $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
+                echo "<br>Sonderfall UTF-8<br>";
+
+            }
+
+            else $feldNeu[] = $ini_array["IPTC-Felder"][$feld];
+
+
+
+
+
+
+        } else {
+
+            echo "<br>Feld $feld ist NICHT in der INI-Datei<br>";
+
+            //Überprüfung, ob das Feld im Header der ersten Datei vorkommt
+            if (isset($iptcOriginal[$feld])) {
+
+                echo "Feld $feld ist im Header der ersten Datei vorhanden<br>";
+                echo "Wert: ";
+                var_dump($iptcOriginal[$feld]);
+                
+                //Sonderfall UTF-8
+            if ($feld == "1#090" && $ini_array["IPTC-Felder"][$feld] == "true") {
+                $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
+                echo "<br>Sonderfall UTF-8<br>";
+
+            }
+
+            else $feldNeu = $iptcOriginal[$feld]; //Der erste Wert wird übernommen, wenn das Feld in der INI-Datei nicht vorkommt
+
+            } else {
+
+                echo "Feld $feld ist im Header der ersten Datei NICHT vorhanden<br>";
+            }
+
+        }
+
+        echo "<br>Neuer Wert für Feld<br>";
+        var_dump($feldNeu);
+        echo "<br>";
+
+        //Sonderfall Stichwort 2#025
+        if ($feld == "2#025") {
+            //Das Stichwort-Array des Headers bekommt das neue Stichwort, wenn dieses nicht schon vorhanden ist (Feld 2#025)
+            if (in_array($neuesStichwort, $feldNeu) == false)
+                $feldNeu[] = $neuesStichwort;
+
+            echo "<br>Sonderfall Neuer Wert für Stichwörter<br>";
+            var_dump($feldNeu);
+            echo "<br>";
+
+        }
+
+
+
+
+    }
+
+
+}
