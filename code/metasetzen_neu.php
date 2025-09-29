@@ -5,7 +5,7 @@
 
 // error_reporting(0); //Fehlermeldungen abschalten
 
-$uebergabe = ["true", "false", "Test neu", "C:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2256.jpg", "C:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2261.jpg"];
+$uebergabe = ["true", "false", "Test ganz neu", "e:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2256.jpg", "e:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2261.jpg", "e:/web/schnell-tagger/code/testbilder/2501 Winter/Clipboard 1.jpg" , "e:/web/schnell-tagger/code/testbilder/2501 Winter/Blenderman_Paul.JPG"];
 
 //Die Übergabe wird zerlegt
 foreach ($uebergabe as $z => $element) {
@@ -70,7 +70,7 @@ foreach ($bildNamen as $z2 => $bild) {
         $feldNeu = [];
 
         //Überprüfung, ob das Feld in der INI-Datei vorkommt
-        if (isset($ini_array["IPTC-Felder"][$feld])) {
+        if (isset($ini_array["IPTC-Felder"][$feld]) && $feld != "2#025") {
 
 
 
@@ -81,12 +81,12 @@ foreach ($bildNamen as $z2 => $bild) {
                 $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
                 echo "<br>Sonderfall UTF-8<br>";
 
-            } elseif ($feld == "2#025") {
+            } /*elseif ($feld == "2#025") {
 
                 echo "<br><b>2#25</b><br>";
                 $feldNeu[] = "";
 
-            }
+            }*/
             else   $feldNeu[] = $ini_array["IPTC-Felder"][$feld];
             
 
