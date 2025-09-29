@@ -9,7 +9,6 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 * Die Anwendung ist **nicht für den Einsatz im öffentlichen Netz gedacht**
     1. Es gibt **keine ausreichenden Sicherheitsprüfungen** in den PHP-Skripten
     2. Die Anwendung lädt alle **Bilder komplett und unkomprimiert**, was für den Betrieb über das Internet ungeeignet ist.
-* Derzeit **überschreibt die Anwendung den kompletten IPTC-Header** (nicht aber XMP oder Exif). Felder wie Urheber, Headline oder dergl. gehen verloren, es sei denn sie stehen auch im XMP-Header. 
 * Wenn der Schreibprozess gestört wird, können Bilder kaputt gehen. **Es empfiehlt sich, die Funktion für Sicherheitskopien zu verwenden** (was auch die Voreinstellung ist). Sie kopiert die Bilder vor dem Schreiben des Headers.
 * Im Folgenden spreche ich von der JavaScript-Datei *script.js*. Wer TypeScript einsetzt, ändert die Konfiguration in *script.ts* und kompiliert diese. 
 
