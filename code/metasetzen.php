@@ -3,29 +3,26 @@
 //Skript fügt das neue Stichwort den IPTC-Daten der Bilder hinzu
 //---------------------------------------------------------------
 
+
+
 error_reporting(0); //Fehlermeldungen abschalten
 
-//Konfiguration Urheber. Sollte einmal in die TS-Datei 
-$urheber = "Wolf Hosbach, www.wolf-hosbach.de";
-
-//Übergabe POST
+//Übergabe POST aus dem JavaScript
 $uebergabeJson = file_get_contents("php://input");
 $uebergabeOhnehtml = html_entity_decode($uebergabeJson, ENT_QUOTES, "UTF-8"); //Falls sich HTML eingeschlichen hat.
 $uebergabe = json_decode($uebergabeOhnehtml, true);
 
-// bug $uebergabe = ["true","false","o3","C:/schnell-tagger2/code/Clipboard 1.jpg"];
+
+//$uebergabe = ["true", "Test ganz neu", "e:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2256.jpg", "e:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2261.jpg", "e:/web/schnell-tagger/code/testbilder/2501 Winter/Clipboard 1.jpg"]; //Bug
 
 //Die Übergabe wird zerlegt
 foreach ($uebergabe as $z => $element) {
 
     switch ($z) {
-        case 1: //Urheber Ja Nein?
-            $urheberJaNein = $element;
-            break;
         case 0: //Sicherheitskopie Ja Nein?
             $sicherheitskopieJaNein = $element;
             break;
-        case 2: //Das neue Stichwort
+        case 1: //Das neue Stichwort
             $neuesStichwort = $element;
             break;
         default: //Die Liste der Bildnamen
@@ -34,115 +31,143 @@ foreach ($uebergabe as $z => $element) {
     }
 }
 
+//echo "Sicherheitskopien: $sicherheitskopieJaNein<br>";
+//echo "Neues Stichwort: $neuesStichwort<br>";    
+//var_dump($bildNamen);
+//echo "<br><br>";
 
+//Die Liste aller möblichen IPTC-Felder laut https://de.wikipedia.org/wiki/IPTC-IIM-Standard
 
-//wenn Sicherheitskopien gewünscht sind, wird ein entsprechendes Verzeichnis erstellt
-if ($sicherheitskopieJaNein == "true") {
+//echo "Alle möglichen IPTC-Felder:<br>";
+$alleFelder = array("1#020", "1#090", "2#005", "2#007", "2#010", "2#015", "2#020", "2#025", "2#040", "2#055", "2#060", "2#062", "2#063", "2#065", "2#080", "2#085", "2#090", "2#092", "2#095", "2#100", "2#101", "2#103", "2#105", "2#110", "2#115", "2#116", "2#118", "2#120", "2#122");
 
-    $verzeichnisname = ".\schnell-tagger_sec";
-    if (!file_exists($verzeichnisname)) mkdir($verzeichnisname);
-    
-    //für die Namenserweiterung der Kopien mit Datum, Uhrzeit und Zufallszahl
-    $zeit = time();
-    $namenserweiterung = date("Ymd_His", $zeit) . "_" . rand(1, 100000); 
-    
-    
-    //Jede Datei wird kopiert
-    foreach ($bildNamen as $bild) {
+//var_dump($alleFelder);
 
-        $quelle = $bild;
-        $ziel = $verzeichnisname . "\\" . basename($bild) . "_$namenserweiterung" ;
-        copy($quelle, $ziel);
-    }
-}
+//echo "<br><br>";
+//echo "Die IPTC-Felder aus der  INI-Datei:<br>";
 
+//Die Felder aus der INI-Datei werden ausgelesen 
+$ini_array = parse_ini_file("Felder.ini", true);
+//var_dump($ini_array);
 
-/////---------------Die Hauptfunktion: Neue Stichwörter und ggf. Urheber für jede Datei zufügen
-
+//echo "<br><br>";
 
 foreach ($bildNamen as $z2 => $bild) {
 
+
+    //echo "<br><br><b>Bild</b> $z2: $bild<br>";
     //Den vorhandenen IPTC-Header auslesen
-    $getSizeAlles = getimagesize($bild, $getSizeIPTC); //getimagesize liefert mit dem zweiten Parameter ($info) die IPTC-Daten
+    $getSizeAuslesen = getimagesize($bild, $getSizeIPTC); //getimagesize liefert mit dem zweiten Parameter ($info) die IPTC-Daten
     if (isset($getSizeIPTC["APP13"])) {
 
         $iptcOriginal = iptcparse($getSizeIPTC["APP13"]);
     }
 
-    //Wenn kein IPTC-Header vorhanden ist, wird ein leerer angelegt
-    $laengeStichwortfeld = 0;
-    if (isset($iptcOriginal["2#025"])) $laengeStichwortfeld = count($iptcOriginal["2#025"]);
-
-    else {
-
-        //Wir erzeugen einen leeren Headerm 
-        $binleer = chr(0) . chr(2);
-
-        $lange = strlen($binleer);
-        $binaeretagleer = chr(0x1c) . chr(2) . chr(0) . chr($lange >> 8) . chr($lange & 0xff) . $binleer; //$binaeretags wird etwas länger
-
-        $leer = iptcembed($binaeretagleer, $bild, 0);
-        $datei = fopen($bild, "w");
-        fwrite($datei, $leer);
-        fclose($datei);
 
 
-        //Dem leeren Header wird ein neues Array mit dem  neuen Stichwort zugewiesen (Feld 2#025)
-        $iptcOriginal["2#025"][$laengeStichwortfeld] = $neuesStichwort;
-    }
+    //echo "<br><br>";
+    //echo "Felder aus dem Header der ersten Datei:<br>";
+    //var_dump($iptcOriginal);
 
-    //Das Stichwort-Array des Headers bekommt das neue Stichwort, wenn dieses nicht schon vorhanden ist (Feld 2#025)
-    if (in_array($neuesStichwort, $iptcOriginal["2#025"]) == false)  $iptcOriginal["2#025"][$laengeStichwortfeld] = $neuesStichwort;
+    //echo "<br><br>";
 
+    $zumEinbetten = "";
 
-    ///Urheber irgendwie so: 
-    ///Wir ersetzen den Copyright-Hinweis (Feld 2#116. Der alte wird gelöscht) $iptc_orig["2#116"][0] = $urheber;
+    //Durchlauf durch alle Felder
+    foreach ($alleFelder as $feld) {
 
+        $feldNeu = [];
 
-    ///Nun folgt die Erzeugung des neuen binären Codes zum Einbetten in die Bilddatei
-    //---------------------------------------------------------------
-
-    //Der erste Teils des binäre Codes ($binaeretags) für den UTF-8-Zeichencode im Abschnitt 1#090 
-    $utf8abschnitt = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G 
-    $lange = strlen($utf8abschnitt);
-    $binaeretags = chr(0x1C) . chr(1) . chr('090') . chr($lange >> 8) . chr($lange & 0xFF) . $utf8abschnitt;
+        //Überprüfung, ob das Feld in der INI-Datei vorkommt
+        if (isset($ini_array["IPTC-Felder"][$feld]) && $feld != "2#025") {
 
 
-    ////Der zweite Teils des binäre Codes ($binaeretags) für die neuen Tags in 2#025 
-    $abschnitt  = 2;
-    $unterabschnitt = 25;
-    if (is_array($iptcOriginal["2#025"])) {
 
-        foreach ($iptcOriginal["2#025"] as $i1) {
-            $lange = strlen($i1);
-            $binaeretags .= chr(0x1c) . chr($abschnitt) . chr($unterabschnitt) . chr($lange >> 8) . chr($lange & 0xff) . $i1; //$binaeretags wird etwas länger
+            //echo "<br>Feld $feld ist in der INI-Datei<br>";
+
+            //Sonderfall UTF-8
+            if ($feld == "1#090" && $ini_array["IPTC-Felder"][$feld] == "true") {
+                $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
+                //echo "<br>Sonderfall UTF-8<br>";
+
+            } /*elseif ($feld == "2#025") {
+
+                echo "<br><b>2#25</b><br>";
+                $feldNeu[] = "";
+
+            }*/
+            else   $feldNeu[] = $ini_array["IPTC-Felder"][$feld];
+            
+
+
+
+
+
+
+        } else {
+
+            // echo "<br>Feld $feld ist NICHT in der INI-Datei<br>";
+
+            //Überprüfung, ob das Feld im Header der ersten Datei vorkommt
+            if (isset($iptcOriginal[$feld])) {
+
+                //echo "Feld $feld ist im Header der ersten Datei vorhanden<br>";
+                //echo "Wert: ";
+                //var_dump($iptcOriginal[$feld]);
+
+                //Sonderfall UTF-8
+                if ($feld == "1#090" && $ini_array["IPTC-Felder"][$feld] == "true") {
+                    $feldNeu[] = chr(0x1b) . chr(0x25) . chr(0x47); //ESC % G;
+                    //echo "<br>Sonderfall UTF-8<br>";
+
+                } else
+                    $feldNeu = $iptcOriginal[$feld]; //Der erste Wert wird übernommen, wenn das Feld in der INI-Datei nicht vorkommt
+
+            } else {
+
+                //echo "Feld $feld ist im Header der ersten Datei NICHT vorhanden<br>";
+            }
+
         }
-    }
 
-/*
-    ////Der dritte  Teils des binäre Codes ($binaeretags) für den Urheber in 2#116 
-    $abschnitt  = 2;
-    $unterabschnitt = 116;
-    if (is_array($iptc_orig["2#116"])) {
+        //Sonderfall Stichwort 2#025
+        if ($feld == "2#025") {
+            //Das Stichwort-Array des Headers bekommt das neue Stichwort, wenn dieses nicht schon vorhanden ist (Feld 2#025)
+            if (in_array($neuesStichwort, $feldNeu) == false)
+                $feldNeu[] = $neuesStichwort;
 
-        foreach ($iptc_orig["2#116"] as $i3) {
-            $lang = strlen($i3);
-            $binaeretags .= chr(0x1c) . chr($abschnitt) . chr($unterabschnitt) . chr($lang >> 8) . chr($lang & 0xff) . $i3; //$binaeretags wird etwas länger
+
         }
+
+        if ($feldNeu != []) {
+            //echo "<br>Neuer Wert für Feld<br>";
+            //var_dump($feldNeu);
+            //echo "<br>";
+
+            //Nun wird der binäre Code zum Einbetten in die Bilddatei erzeugt
+
+            $abschnitt = (int) substr($feld, 0, 1);
+            $unterabschnitt = (int) substr($feld, 2, 3);
+
+            //echo "<br>Abschnitt: $abschnitt Unterabschnitt: $unterabschnitt<br>";
+
+            foreach ($feldNeu as $i1) {
+                $laenge = strlen($i1);
+                $zumEinbetten .= chr(0x1c) . chr($abschnitt) . chr($unterabschnitt) . chr($laenge >> 8) . chr($laenge & 0xff) . $i1; //
+            }
+        }
+
+
+
     }
-    */
+
+    //echo "<br>Zum Einbetten: $zumEinbetten<br>";
 
 
-
-    /// Der so entstandene binäre Code wird in das Bild im IPTC-Abschnitt eingefügt. Für iptcembed gibt es drei Modi: 
-
-    // Modus 0 - Das neue Bild wird in die Variable ($bildmittagsneu) eingefügt
-    // Modus 1 - ... in die Variable eingefügt und dem Web-Client übergeben
-    // Modus 2 - ... nur dem Web-Client übergeben
     $modus = 0;
 
 
-    $bildMitNeuenTags = iptcembed($binaeretags, $bild, $modus); //Rückgabe: Ein Bild mit den neuen Tags
+    $bildMitNeuenTags = iptcembed($zumEinbetten, $bild, $modus); //Rückgabe: Ein Bild mit den neuen Tags
 
 
     //Nun schreiben wir das neue Bild in eine neue Datei
@@ -151,6 +176,7 @@ foreach ($bildNamen as $z2 => $bild) {
     fclose($datei);
 }
 
+
 $status[] = "ok"; //Statusmeldung
 
 echo json_encode($status); 
@@ -158,3 +184,5 @@ echo json_encode($status);
 
 
 //Schnell-Tagger Version 0.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'
+
+
