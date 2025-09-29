@@ -2,7 +2,7 @@
 
 Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw. Tags in JPEG-Bildern schnell und einfach zu verwalten: lesen und schreiben (löschen soll folgen). Sie modifiziert dafür die IPTC-Header der Bilder (nicht aber die Exif. oder XMP-Header). Zum Betrieb sind ein Webserver und PHP erforderlich. Ich habe mit XAMPP 8.2.12 unter Win 11 gearbeitet. 
 
-Über die Weboberfläche lassen sich nur die IPTC-Stichwörter ändern, über die die Datei *felder.ini* jedoch **alle** IPTC-Felder.  
+Über die Weboberfläche lassen sich nur die IPTC-Stichwörter ändern, über die die Datei *felder.ini* jedoch **alle IPTC-Felder**.  
 
 ![Oberfläche Schnell-Tagger](./screen.png)
 
@@ -51,11 +51,11 @@ Diese Funktion lässt sich in der Datei *script.js* deaktivieren:
 
 ## Alle IPTC-Felder ändern
 Das kann über die Datei *felder.ini* erfolgen, die alle Felder laut IPTC-Standard (https://de.wikipedia.org/wiki/IPTC-IIM-Standard) auflistet. 
-* Wer ein Feld setzen möchte, entfernt das Semikolon am Anfang der jeweiligen Zeile und ersetzt `false` durch den gewünschten Text in Anführungszeichen(!). Ohne Text löscht das Skript das Feld, falls vorhanden.
+* Wer ein Feld setzen möchte, entfernt das Semikolon am Anfang der jeweiligen Zeile und ersetzt `false` durch den gewünschten Text in Anführungszeichen (!). Ohne Text löscht das Skript das Feld, falls vorhanden.
 * Ein Sonderfall ist *Coded Character Set (1#090)*. In der Voreinstellung wird hier  UTF-8 gesetzt. Achtung, dies ist eine binärer Wert! Im Skript funktioniert nur `true` für UTF-8 oder `false` für nichts. Andere Codes sind nicht vorgesehen. UTF-8 ist aber wegen der deutschen Umlaute empfehlenswert.
 * Ein weiterer Sonderfall ist *Keywords (2#025)*. Dieser Inhalt kommt aus der JavaScript-Oberfläche und der Wert in der ini-Datei ist nur ein Platzhalter und das Programm ignoriert ihn.
 * **Achtung!** die Einstellungen in der ini-Datei gelten für alle Bilder, die mit dem Schnell-Tagger bearbeitet werden.
-* **Achtung!** Hier gemachte Einstellungen überschreiben die vorhandenen Felder, nur bei *Keywords* ergänzen sie sie.
+* **Achtung!** Hier gemachte Einstellungen überschreiben die vorhandenen Felder.
 * **Achtung!** Das Skript überprüft nicht, ob die Eingaben korrekt sind. *Coded Character Set* muss z.B. binär sein. *Country/Primary Location Code* muss ein Länderkürzel sein. Falsche Eingaben können die Bilddatei beschädigen! Bitte informieren unter dem o.g. Link informieren.
 
 
