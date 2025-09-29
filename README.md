@@ -2,6 +2,8 @@
 
 Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw. Tags in JPEG-Bildern schnell und einfach zu verwalten: lesen und schreiben (löschen soll folgen). Sie modifiziert dafür die IPTC-Header der Bilder (nicht aber die Exif. oder XMP-Header). Zum Betrieb sind ein Webserver und PHP erforderlich. Ich habe mit XAMPP 8.2.12 unter Win 11 gearbeitet. 
 
+Über die Weboberfläche lassen sich nur die IPTC-Stichwörter ändern, über die die Datei *felder.ini* jedoch **alle** IPTC-Felder.  
+
 ![Oberfläche Schnell-Tagger](./screen.png)
 
 ## Wichtige Infos vorweg
@@ -19,6 +21,7 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 * Kompiliert mit `tsc -target es2021`
 * Zum Lesen der IPTC-Tags dient der PHP-Befehl `$sizgetimagesize()`
 * Zum Schreiben `iptcembed()`
+* Schreibt über die Datei *felder.ini* sämtliche IPTC-Felder, laut Standard.
 
 ## Basis-Funktionen
 
@@ -28,7 +31,7 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 
 ## Sicherheitskopien
 
-Standardmäßig ist eine Funktion für Sicherheitskopien aktiv, da Bilder beim Schreiben kaputt gehen können, wenn das Skript beim Schreibvorgang gestört wird, (fremder Zugriff auf die Datei, Serverabsturz o.ä.). Die Kopien landen in einem Unterordner *schnell-tagger_sec...*. Erst dann beginnt der Schreibvorgang.
+Standardmäßig ist eine Funktion für Sicherheitskopien aktiv, da Bilder beim Schreiben kaputt gehen können, wenn das Skript beim Schreibvorgang gestört wird, (fremder Zugriff auf die Datei, Serverabsturz o.ä.). Die Kopien landen im Unterordner *schnell-tagger_sec*. Erst dann beginnt der Schreibvorgang.
 
 Diese Funktion lässt sich in der Datei *script.js* deaktivieren: 
 * `const sicherheitskopien = true;` //eingeschaltet (Voreinstellung)
@@ -46,8 +49,17 @@ Diese Funktion lässt sich in der Datei *script.js* deaktivieren:
 * Wer die Datei *index.html* anders benennt, beispielsweise als Teil einer größeren Anwendung, muss den zugehörigen Eintrag in *script.js* ändern, wegen der Funktion des Back-Buttons des Browsers. Hier fehlt noch eine automatische Erkennung.
     * `const dateiHistory = "./index_xyz.html";`
 
+## Alle IPTC-Felder ändern
+Das kann über die Datei *felder.ini* erfolgen, die alle Felder laut IPTC-Standard (https://de.wikipedia.org/wiki/IPTC-IIM-Standard) auflistet. 
+* Wer ein Feld setzen möchte, entfernt das Semikolon am Anfang der jeweiligen Zeile und ersetzt `false` durch den gewünschten Text in Anführungszeichen(!). Ohne Text löscht das Skript das Feld, falls vorhanden.
+* Ein Sonderfall ist *Coded Character Set (1#090)*. In der Voreinstellung wird hier  UTF-8 gesetzt. Achtung, dies ist eine binärer Wert! Im Skript funktioniert nur `true` für UTF-8 oder `false` für nichts. Andere Codes sind nicht vorgesehen. UTF-8 ist aber wegen der deutschen Umlaute empfehlenswert.
+* Ein weiterer Sonderfall ist *Keywords (2#025)*. Dieser Inhalt kommt aus der JavaScript-Oberfläche und der Wert in der ini-Datei ist nur ein Platzhalter und das Programm ignoriert ihn.
+* **Achtung!** die Einstellungen in der ini-Datei gelten für alle Bilder, die mit dem Schnell-Tagger bearbeitet werden.
+* **Achtung!** Hier gemachte Einstellungen überschreiben die vorhandenen Felder, nur bei *Keywords* ergänzen sie sie.
+* **Achtung!** Das Skript überprüft nicht, ob die Eingaben korrekt sind. *Coded Character Set* muss z.B. binär sein. *Country/Primary Location Code* muss ein Länderkürzel sein. Falsche Eingaben können die Bilddatei beschädigen! Bitte informieren unter dem o.g. Link informieren.
+
+
 ## Was fehlt noch?
-* Bereits in den Skripten ist angelegt, dass Anwender einen Urheber in die Metadaten der Bilder eintragen können. Das funktioniert noch nicht
 * Die Konfiguration sollte über eine ini-Datei erfolgen
 * Stichwörter löschen fehlt schmerzlich
 * Ein Test unter Linux fehlt
