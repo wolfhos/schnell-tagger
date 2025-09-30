@@ -237,10 +237,11 @@ class RahmenRechts {
             return w1.localeCompare(w2);
         });
         //...und in einen HTML-String umgeleitet...
-        let stichwortlisteHtml = '';
+        let stichwortlisteHtml = '<ul>';
         this._stichworte.forEach(function (stichwort, z2) {
-            stichwortlisteHtml = stichwortlisteHtml + stichwort + "<br>";
+            stichwortlisteHtml = stichwortlisteHtml + "<li class='stichwortAngezeigt' id='stichwortAngezeigtID_" + stichwort + "'>" + stichwort + "</li>";
         });
+        stichwortlisteHtml += '</ul>';
         //... und angezeigt
         if (stichwortlisteHtml == '')
             document.getElementById("allestichwoerter").innerHTML = "<i>Kein Stichwort vorhanden</i>";
@@ -330,7 +331,7 @@ class RahmenRechts {
     }
 }
 ///--------------------------- 
-// GUI-Klassen
+// Initiierung und Start
 ///---------------------------
 //Klasse Initiierung
 class Initiierung {

@@ -70,6 +70,17 @@
 
  }
 
+
+  .stichwortAngezeigt {
+
+     margin-left: -1em;
+ }
+
+ .stichwortAngezeigt:hover {
+
+     background-color: #f63030;
+ }
+
  #markieren_tabelle {
 
      border: 0.1em solid #000000;

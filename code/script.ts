@@ -389,15 +389,16 @@ class RahmenRechts {
 
 
         //...und in einen HTML-String umgeleitet...
-        let stichwortlisteHtml: string = '';
+        let stichwortlisteHtml: string = '<ul>';
 
         this._stichworte.forEach(function (stichwort: string, z2: number) {
 
 
-            stichwortlisteHtml = stichwortlisteHtml + stichwort + "<br>";
+            stichwortlisteHtml = stichwortlisteHtml + "<li class='stichwortAngezeigt' id='stichwortAngezeigtID_" + stichwort + "'>" + stichwort + "</li>";
 
         });
 
+        stichwortlisteHtml += '</ul>';
         //... und angezeigt
         if (stichwortlisteHtml == '') document.getElementById("allestichwoerter")!.innerHTML = "<i>Kein Stichwort vorhanden</i>";
         else document.getElementById("allestichwoerter")!.innerHTML = stichwortlisteHtml;
@@ -529,7 +530,7 @@ class RahmenRechts {
 
 
 ///--------------------------- 
-// GUI-Klassen
+// Initiierung und Start
 ///---------------------------
 
 //Klasse Initiierung
