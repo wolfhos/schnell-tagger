@@ -350,6 +350,7 @@ class RahmenRechts {
     _stichwortNeu: string;
     _bilderNurNamen: string[];
     _goAusgeloest: boolean;
+    _stichwortZumLöschen: string;
 
     constructor() {
 
@@ -357,6 +358,7 @@ class RahmenRechts {
         this._stichwortNeu = '';
         this._bilderNurNamen = new Array();
         this._goAusgeloest = false; //Go-Button wurde noch nicht gedrückt
+        this._stichwortZumLöschen = '';
     }
 
     //Methode Stichworte anzeigen
@@ -524,6 +526,20 @@ class RahmenRechts {
         else document.getElementById("nachricht_rechts")!.innerHTML = "<i>Bitte warten: work in progress</i>";//Falls noch eine Verarbeitung läuft
 
 
+    }
+
+    jaNeinLöschen(): void {
+
+        let jaNeinDiv = document.getElementById("jaNein");
+        jaNeinDiv!.style.visibility = "visible";
+
+        let jaNeinFrage = document.getElementById("jaNeinFrage");
+        jaNeinFrage!.innerHTML = "Soll das Stichwort <b>" + this._stichwortZumLöschen + "</b> wirklich gelöscht werden?";
+
+        let jaNeinListe = document.getElementById("jaNeinListe");
+        let aktuelleListe: string[] = initiierung._rahmenMitte._markierteBilder.map(bild => bild._name);
+        //jaNeinListe!.innerHTML = "Aus folgenden Bildern:" + initiierung._rahmenMitte._markierteBilder.map(bild => "<br>" + bild._name);
+        jaNeinListe!.innerHTML = "Aus folgenden Bildern:" + aktuelleListe.map(bild => "<br>" + bild);
     }
 
 }
@@ -704,8 +720,10 @@ class Initiierung {
         
         listenerStichwoerter.addEventListener('click', function (event : any){
 
-            let stichwort = event.target.innerText; // oder event.target.textContent
-            console.log('Stichwort-Inhalt:', stichwort);
+            initiierung._rahmenRechts._stichwortZumLöschen = event.target.innerText; // oder event.target.textContent
+            console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLöschen);
+
+            initiierung._rahmenRechts.jaNeinLöschen(); //Ja/Nein-Abfrage zum Löschen eines Stichworts
 
         });
 

@@ -1,3 +1,20 @@
+a {
+     text-decoration: none;
+     color: black;
+ }
+
+ a:visited,
+ a:active {
+     text-decoration: none;
+     color: black
+ }
+
+ a:hover {
+     background-color: #bebebe;
+ }
+
+  
+ 
  .flex-container {
 
      display: flex;
@@ -159,17 +176,46 @@
 
  }
 
- a {
-     text-decoration: none;
-     color: black;
+ #jaNein {
+    border : 1em solid red;
+    background-color: white;
+     text-align: center;
+     width: 17em;
+     position: absolute;
+    top: 9em;
+    left: 46em;
+    visibility: hidden
+    
+
  }
 
- a:visited,
- a:active {
-     text-decoration: none;
-     color: black
+ #schalterJa {
+        
+
+        border: 0.1em solid red;
+        text-align: center;
+        font-weight: bold;
+        width: 8em;
+
+    
  }
 
- a:hover {
-     background-color: #bebebe;
+ #schalterNein {
+        border: 0.1em solid #000000;
+        text-align: center;
+        font-weight: bold;
+        width: 8em;
+        
  }
+
+ #schalterJa:hover {
+
+     background-color: red
+ }
+
+ #schalterNein:hover {
+
+     background-color: #bebebe
+ }
+ 
+ 
