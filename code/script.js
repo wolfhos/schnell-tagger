@@ -425,6 +425,12 @@ class Initiierung {
         listenerEingabefleld.addEventListener('click', function (event) {
             listenerEingabefleld.value = ""; //Eingabefeld wird geleert, wenn es angeklickt wird
         });
+        let listenerStichwoerter = document.getElementById('allestichwoerter');
+        listenerStichwoerter.addEventListener('click', function (event) {
+            const stichwort = event.target.innerText; // oder event.target.textContent
+            console.log('Stichwort-Inhalt:', stichwort);
+        });
+        //-----
     }
 }
 ///--------------------------- 

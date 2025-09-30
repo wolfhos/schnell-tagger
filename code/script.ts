@@ -697,6 +697,21 @@ class Initiierung {
 
         });
 
+        
+
+        let listenerStichwoerter: any = document.getElementById('allestichwoerter');
+        
+        
+        listenerStichwoerter.addEventListener('click', function (event : any){
+
+            let stichwort = event.target.innerText; // oder event.target.textContent
+            console.log('Stichwort-Inhalt:', stichwort);
+
+        });
+
+
+        //-----
+
 
 
 
