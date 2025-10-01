@@ -196,7 +196,7 @@ class RahmenLinks {
             console.log('Bug Ordner: ' + einOrdner);
 
             if (einOrdner != 'schnell-tagger_sec')  //Das Sicherheitskopienverzeichnis wird nicht angezeigt
-            htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
+                htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
 
         });
 
@@ -349,16 +349,18 @@ class RahmenRechts {
     _stichworte: string[];
     _stichwortNeu: string;
     _bilderNurNamen: string[];
-    _goAusgeloest: boolean;
-    _stichwortZumLöschen: string;
+    _schreibenBlockiert: boolean;
+    _stichwortZumLoeschen: string;
+    _listeZuLoeschendeBilder: Bild[];
 
     constructor() {
 
         this._stichworte = new Array();
         this._stichwortNeu = '';
         this._bilderNurNamen = new Array();
-        this._goAusgeloest = false; //Go-Button wurde noch nicht gedrückt
-        this._stichwortZumLöschen = '';
+        this._schreibenBlockiert = false; //Kein Schreib- oder Löschvorgang läuft
+        this._stichwortZumLoeschen = '';
+        this._listeZuLoeschendeBilder = new Array();
     }
 
     //Methode Stichworte anzeigen
@@ -410,7 +412,7 @@ class RahmenRechts {
     //Methode den Bildern ein neues Stichwort hinzufügen
     stichwortHinzufuegen(): void {
 
-        this._goAusgeloest = true; //Go-Button wurde gedrückt
+        this._schreibenBlockiert = true; //Go-Button wurde gedrückt. Es läuft eine Verarbeitung und andere Zugriffe werden blockiert
         this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
 
         let bildZugefuegt: boolean = false; //Wurde ein Bild der Liste für PHP zugefügt?
@@ -469,13 +471,13 @@ class RahmenRechts {
                     this.aktualisierenMarkierteBilder();//Stichwort auch in die Bilderliste übernehmen...
                     this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
                     document.getElementById("nachricht_rechts")!.innerHTML = "<i>fertig</i>";//
-                    this._goAusgeloest = false; //Go-Button wird wieder auf nicht gedrückt gesetzt
+                    this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
 
                     return data;
                 });
 
         }
-        else this._goAusgeloest = false; //Go-Button wird zurückgesetzt, auch wenn kein Bild zugefügt wurde
+        else this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
 
     }
 
@@ -508,7 +510,7 @@ class RahmenRechts {
     goButton(): void {
 
 
-        if (initiierung._rahmenRechts._goAusgeloest == false) { //Nur wenn nicht schon eine Verarbeitung läuft...
+        if (initiierung._rahmenRechts._schreibenBlockiert == false) { //Nur wenn nicht schon eine Verarbeitung läuft...
 
             if (initiierung._rahmenMitte._markierteBilder.length != 0) { //.. und kein Bild markiert ist, wird eine Nachricht angezeigt
 
@@ -528,18 +530,54 @@ class RahmenRechts {
 
     }
 
-    jaNeinLöschen(): void {
+    //Löschen vorbereiten
+    vorbereitungLoeschen(): void {
 
-        let jaNeinDiv = document.getElementById("jaNein");
-        jaNeinDiv!.style.visibility = "visible";
+        //Prüfen, ob Schreiben blockiert ist
+        if (this._schreibenBlockiert == false) {
 
-        let jaNeinFrage = document.getElementById("jaNeinFrage");
-        jaNeinFrage!.innerHTML = "Soll das Stichwort <b>" + this._stichwortZumLöschen + "</b> wirklich gelöscht werden?";
+            //Liste der Bilder, aus denen das Stichwort gelöscht werden soll aus den markierten Bildern suchen
+            initiierung._rahmenMitte._markierteBilder.forEach((einBild: Bild) => {
 
-        let jaNeinListe = document.getElementById("jaNeinListe");
-        let aktuelleListe: string[] = initiierung._rahmenMitte._markierteBilder.map(bild => bild._name);
-        //jaNeinListe!.innerHTML = "Aus folgenden Bildern:" + initiierung._rahmenMitte._markierteBilder.map(bild => "<br>" + bild._name);
-        jaNeinListe!.innerHTML = "Aus folgenden Bildern:" + aktuelleListe.map(bild => "<br>" + bild);
+                if (einBild._stichworte.indexOf(this._stichwortZumLoeschen) != -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort da ist
+                    this._listeZuLoeschendeBilder.push(einBild);
+                }
+
+                console.log('Liste zu löschende Bilder: ' + JSON.stringify(this._listeZuLoeschendeBilder) + ' Anzahl: ' + this._listeZuLoeschendeBilder.length);
+
+            });
+
+            //Anzeigen der Sicherheitsabfrage
+            let jaNeinDiv : any = document.getElementById("jaNein");
+            jaNeinDiv!.style.visibility = "visible";
+
+            let jaNeinFrage : any = document.getElementById("jaNeinFrage");
+            jaNeinFrage!.innerHTML = "Soll das Stichwort <b>" + this._stichwortZumLoeschen + "</b> wirklich gelöscht werden?";
+
+            let jaNeinListe : any = document.getElementById("jaNeinListe");
+
+            let listeLoeschbilderHtml: string[] = this._listeZuLoeschendeBilder.map(bild => "<br>" + bild._name);
+
+            // ein oder mehrere Bilder?
+            let loeschText1: string = "folgenden";
+            let loeschText2: string = "folgendem";
+            let loeschText3: string = "Bildern";
+            let loeschText4: string = "Bild";
+
+            if (this._listeZuLoeschendeBilder.length == 1) { //ein Bild
+
+                jaNeinListe!.innerHTML = "Aus " + loeschText2 + " " + loeschText4 + listeLoeschbilderHtml;
+            }
+            else { //mehrere Bilder
+
+                jaNeinListe!.innerHTML = "Aus " + loeschText1 + " " + listeLoeschbilderHtml.length + " " + loeschText3 + listeLoeschbilderHtml;
+            }
+        }
+
+        //Wenn Schreiben blockiert ist, wird eine entsprechende Nachricht angezeigt
+        else document.getElementById("nachricht_rechts")!.innerHTML = "<i>Bitte warten: work in progress</i>";//Falls noch eine Verarbeitung läuft
+
+        //Der weitere Ablauf ergibt sich, je nachdem ob der Anwender den Ja- oder Nein-Buttons klickt
     }
 
 }
@@ -591,7 +629,7 @@ class Initiierung {
         //----------------
 
         //Listener für den Back-Button des Browsers
-        window.addEventListener("popstate", (event : any) => {
+        window.addEventListener("popstate", (event: any) => {
 
 
             initiierung._rahmenLinks.verzeichnisNeuEinlesen(initiierung._aktuellesVerzeichnis._vorherigesVerzeichnis); //Bei einem Back-Button wird das vorherige Verzeichnis neu eingelesen
@@ -601,7 +639,7 @@ class Initiierung {
 
 
         //Listener Abfragen der Strg-Taste
-        document.addEventListener("keydown", function (event : any) {
+        document.addEventListener("keydown", function (event: any) {
 
             if (event.key == 'Control') {
                 initiierung._strgJaNein = true;
@@ -609,7 +647,7 @@ class Initiierung {
 
 
         });
-        document.addEventListener("keyup", (event : any) => {
+        document.addEventListener("keyup", (event: any) => {
 
 
             if (event.key == 'Control') {
@@ -623,7 +661,7 @@ class Initiierung {
         //Listener: Klick auf RahmenMitte für das Markieren der Bilder 
         let listenerBilder: any = document.getElementById('bilderfeldeinzeln');
 
-        listenerBilder.addEventListener('click', function (event : any) {
+        listenerBilder.addEventListener('click', function (event: any) {
 
 
             if (event.target.attributes.src && event.target.attributes.src.value != undefined) {
@@ -639,7 +677,7 @@ class Initiierung {
         knopf.addEventListener("click", initiierung._rahmenRechts.goButton);
 
         //...und für die Entertaste
-        document.addEventListener("keyup", (event : any) => {
+        document.addEventListener("keyup", (event: any) => {
             if (event.key === "Enter") {
 
                 initiierung._rahmenRechts.goButton(); //Enter-Taste löst den Go-Button aus
@@ -650,7 +688,7 @@ class Initiierung {
 
         //Listener für die Verzeichnisse. Mit Klick Verzeichniswechsel
         let listenerVerzeichnisse: any = document.getElementById('ordnerfeldeinzeln');
-        listenerVerzeichnisse.addEventListener('click', async function (event : any) {
+        listenerVerzeichnisse.addEventListener('click', async function (event: any) {
 
             let ordnerGeklickt: string = event.target.innerHTML; //Der Name des Unterordners
             let neuerPfad: string = '';
@@ -673,7 +711,7 @@ class Initiierung {
 
         //Listener für den Button Alles markieren
         let listenerAllesMarkieren: any = document.getElementById('schalterAlle');
-        listenerAllesMarkieren.addEventListener('click', function (event : any) {
+        listenerAllesMarkieren.addEventListener('click', function (event: any) {
 
 
             initiierung._rahmenMitte._markierteBilder = initiierung._aktuellesVerzeichnis._bilder; //Alle Bilder werden markiert
@@ -692,7 +730,7 @@ class Initiierung {
 
         //Listener für den Button Nichts markieren
         let listenerNichtsMarkieren: any = document.getElementById('schalterKeins');
-        listenerNichtsMarkieren.addEventListener('click', function (event : any) {
+        listenerNichtsMarkieren.addEventListener('click', function (event: any) {
 
             initiierung._aktuellesVerzeichnis._bilder.forEach(element => {
                 let bildElement: any = document.getElementById(element._id);
@@ -703,9 +741,11 @@ class Initiierung {
 
         });
 
+
+        //Listener auf dem Eingabefeld, um es beim Klicken zu leeren
         let listenerEingabefleld: any = document.getElementById('eingabe');
 
-        listenerEingabefleld.addEventListener('click', function (event : any) {
+        listenerEingabefleld.addEventListener('click', function (event: any) {
 
 
             listenerEingabefleld.value = ""; //Eingabefeld wird geleert, wenn es angeklickt wird
@@ -713,17 +753,41 @@ class Initiierung {
 
         });
 
-        
 
+        //Listner auf der Liste der Stichwörter, um ein Löschen auszulösen
         let listenerStichwoerter: any = document.getElementById('allestichwoerter');
-        
-        
-        listenerStichwoerter.addEventListener('click', function (event : any){
 
-            initiierung._rahmenRechts._stichwortZumLöschen = event.target.innerText; // oder event.target.textContent
-            console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLöschen);
 
-            initiierung._rahmenRechts.jaNeinLöschen(); //Ja/Nein-Abfrage zum Löschen eines Stichworts
+        listenerStichwoerter.addEventListener('click', function (event: any) {
+
+            initiierung._rahmenRechts._stichwortZumLoeschen = event.target.innerText; // Das angeklickte Stichwort wird gespeichert
+            console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLoeschen);
+
+            initiierung._rahmenRechts.vorbereitungLoeschen(); //Aufruf der Ja/Nein-Abfrage zum Löschen eines Stichworts
+
+        });
+
+        //Listener für den Ja-Button der Löschabfrage
+        let listenerJaNein: any = document.getElementById('jaNein');
+        
+        listenerJaNein.addEventListener('click', function (event: any) {
+
+            console.log(event.target.innerText);
+
+            if (event.target.innerText == "Ja") { //Ja  geklickt
+
+            } 
+
+            else if (event.target.innerText == "Nein") { //Nein geklickt
+
+                let jaNeinDiv : any = document.getElementById("jaNein");
+                jaNeinDiv!.style.visibility = "hidden"; //Die Ja/Nein-Abfrage wird wieder unsichtbar geschaltet
+                initiierung._rahmenRechts._listeZuLoeschendeBilder = []; //Die Liste der zu löschenden Bilder wird geleert  
+                initiierung._rahmenRechts._stichwortZumLoeschen = ''; //Das zu löschende Stichwort wird gelöscht
+                initiierung._rahmenRechts._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
+                
+            }
+
 
         });
 

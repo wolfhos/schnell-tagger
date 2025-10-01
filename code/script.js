@@ -217,8 +217,9 @@ class RahmenRechts {
         this._stichworte = new Array();
         this._stichwortNeu = '';
         this._bilderNurNamen = new Array();
-        this._goAusgeloest = false; //Go-Button wurde noch nicht gedrückt
-        this._stichwortZumLöschen = '';
+        this._schreibenBlockiert = false; //Kein Schreib- oder Löschvorgang läuft
+        this._stichwortZumLoeschen = '';
+        this._listeZuLoeschendeBilder = new Array();
     }
     //Methode Stichworte anzeigen
     stichworteAnzeigen() {
@@ -251,7 +252,7 @@ class RahmenRechts {
     }
     //Methode den Bildern ein neues Stichwort hinzufügen
     stichwortHinzufuegen() {
-        this._goAusgeloest = true; //Go-Button wurde gedrückt
+        this._schreibenBlockiert = true; //Go-Button wurde gedrückt. Es läuft eine Verarbeitung und andere Zugriffe werden blockiert
         this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
         let bildZugefuegt = false; //Wurde ein Bild der Liste für PHP zugefügt?
         if (this._stichwortNeu == '')
@@ -292,12 +293,12 @@ class RahmenRechts {
                 this.aktualisierenMarkierteBilder(); //Stichwort auch in die Bilderliste übernehmen...
                 this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
                 document.getElementById("nachricht_rechts").innerHTML = "<i>fertig</i>"; //
-                this._goAusgeloest = false; //Go-Button wird wieder auf nicht gedrückt gesetzt
+                this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
                 return data;
             });
         }
         else
-            this._goAusgeloest = false; //Go-Button wird zurückgesetzt, auch wenn kein Bild zugefügt wurde
+            this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
     }
     //Akualierung der Liste der makrierten Bilder mit dem neuen Stichwort
     aktualisierenMarkierteBilder() {
@@ -316,7 +317,7 @@ class RahmenRechts {
         document.getElementById("nachricht_markiert").innerHTML = markiertZaehler + " " + bild_oder_bilder + " ausgewählt";
     }
     goButton() {
-        if (initiierung._rahmenRechts._goAusgeloest == false) { //Nur wenn nicht schon eine Verarbeitung läuft...
+        if (initiierung._rahmenRechts._schreibenBlockiert == false) { //Nur wenn nicht schon eine Verarbeitung läuft...
             if (initiierung._rahmenMitte._markierteBilder.length != 0) { //.. und kein Bild markiert ist, wird eine Nachricht angezeigt
                 document.getElementById("nachricht_rechts").innerHTML = ""; //Nachricht rechts wird wieder gelöscht
                 let eingabe = document.querySelector("#eingabe"); //Das neue Stichwort
@@ -330,15 +331,40 @@ class RahmenRechts {
         else
             document.getElementById("nachricht_rechts").innerHTML = "<i>Bitte warten: work in progress</i>"; //Falls noch eine Verarbeitung läuft
     }
-    jaNeinLöschen() {
-        let jaNeinDiv = document.getElementById("jaNein");
-        jaNeinDiv.style.visibility = "visible";
-        let jaNeinFrage = document.getElementById("jaNeinFrage");
-        jaNeinFrage.innerHTML = "Soll das Stichwort <b>" + this._stichwortZumLöschen + "</b> wirklich gelöscht werden?";
-        let jaNeinListe = document.getElementById("jaNeinListe");
-        let aktuelleListe = initiierung._rahmenMitte._markierteBilder.map(bild => bild._name);
-        //jaNeinListe!.innerHTML = "Aus folgenden Bildern:" + initiierung._rahmenMitte._markierteBilder.map(bild => "<br>" + bild._name);
-        jaNeinListe.innerHTML = "Aus folgenden Bildern:" + aktuelleListe.map(bild => "<br>" + bild);
+    //Löschen vorbereiten
+    vorbereitungLoeschen() {
+        //Prüfen, ob Schreiben blockiert ist
+        if (this._schreibenBlockiert == false) {
+            //Liste der Bilder, aus denen das Stichwort gelöscht werden soll aus den markierten Bildern suchen
+            initiierung._rahmenMitte._markierteBilder.forEach((einBild) => {
+                if (einBild._stichworte.indexOf(this._stichwortZumLoeschen) != -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort da ist
+                    this._listeZuLoeschendeBilder.push(einBild);
+                }
+                console.log('Liste zu löschende Bilder: ' + JSON.stringify(this._listeZuLoeschendeBilder) + ' Anzahl: ' + this._listeZuLoeschendeBilder.length);
+            });
+            //Anzeigen der Sicherheitsabfrage
+            let jaNeinDiv = document.getElementById("jaNein");
+            jaNeinDiv.style.visibility = "visible";
+            let jaNeinFrage = document.getElementById("jaNeinFrage");
+            jaNeinFrage.innerHTML = "Soll das Stichwort <b>" + this._stichwortZumLoeschen + "</b> wirklich gelöscht werden?";
+            let jaNeinListe = document.getElementById("jaNeinListe");
+            let listeLoeschbilderHtml = this._listeZuLoeschendeBilder.map(bild => "<br>" + bild._name);
+            // ein oder mehrere Bilder?
+            let loeschText1 = "folgenden";
+            let loeschText2 = "folgendem";
+            let loeschText3 = "Bildern";
+            let loeschText4 = "Bild";
+            if (this._listeZuLoeschendeBilder.length == 1) { //ein Bild
+                jaNeinListe.innerHTML = "Aus " + loeschText2 + " " + loeschText4 + listeLoeschbilderHtml;
+            }
+            else { //mehrere Bilder
+                jaNeinListe.innerHTML = "Aus " + loeschText1 + " " + listeLoeschbilderHtml.length + " " + loeschText3 + listeLoeschbilderHtml;
+            }
+        }
+        //Wenn Schreiben blockiert ist, wird eine entsprechende Nachricht angezeigt
+        else
+            document.getElementById("nachricht_rechts").innerHTML = "<i>Bitte warten: work in progress</i>"; //Falls noch eine Verarbeitung läuft
+        //Der weitere Ablauf ergibt sich, je nachdem ob der Anwender den Ja- oder Nein-Buttons klickt
     }
 }
 ///--------------------------- 
@@ -432,15 +458,31 @@ class Initiierung {
             initiierung._rahmenMitte._markierteBilder = []; //Alle Bilder werden demarkiert
             initiierung._rahmenRechts.stichworteAnzeigen(); //.. und angezeigt
         });
+        //Listener auf dem Eingabefeld, um es beim Klicken zu leeren
         let listenerEingabefleld = document.getElementById('eingabe');
         listenerEingabefleld.addEventListener('click', function (event) {
             listenerEingabefleld.value = ""; //Eingabefeld wird geleert, wenn es angeklickt wird
         });
+        //Listner auf der Liste der Stichwörter, um ein Löschen auszulösen
         let listenerStichwoerter = document.getElementById('allestichwoerter');
         listenerStichwoerter.addEventListener('click', function (event) {
-            initiierung._rahmenRechts._stichwortZumLöschen = event.target.innerText; // oder event.target.textContent
-            console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLöschen);
-            initiierung._rahmenRechts.jaNeinLöschen(); //Ja/Nein-Abfrage zum Löschen eines Stichworts
+            initiierung._rahmenRechts._stichwortZumLoeschen = event.target.innerText; // Das angeklickte Stichwort wird gespeichert
+            console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLoeschen);
+            initiierung._rahmenRechts.vorbereitungLoeschen(); //Aufruf der Ja/Nein-Abfrage zum Löschen eines Stichworts
+        });
+        //Listener für den Ja-Button der Löschabfrage
+        let listenerJaNein = document.getElementById('jaNein');
+        listenerJaNein.addEventListener('click', function (event) {
+            console.log(event.target.innerText);
+            if (event.target.innerText == "Ja") { //Ja  geklickt
+            }
+            else if (event.target.innerText == "Nein") { //Nein geklickt
+                let jaNeinDiv = document.getElementById("jaNein");
+                jaNeinDiv.style.visibility = "hidden"; //Die Ja/Nein-Abfrage wird wieder unsichtbar geschaltet
+                initiierung._rahmenRechts._listeZuLoeschendeBilder = []; //Die Liste der zu löschenden Bilder wird geleert  
+                initiierung._rahmenRechts._stichwortZumLoeschen = ''; //Das zu löschende Stichwort wird gelöscht
+                initiierung._rahmenRechts._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
+            }
         });
         //-----
     }
