@@ -335,6 +335,7 @@ class RahmenRechts {
     vorbereitungLoeschen() {
         //Prüfen, ob Schreiben blockiert ist
         if (this._schreibenBlockiert == false) {
+            this._schreibenBlockiert = true; //Löschen wird gestartet, Schreiben wird blockiert
             //Liste der Bilder, aus denen das Stichwort gelöscht werden soll aus den markierten Bildern suchen
             initiierung._rahmenMitte._markierteBilder.forEach((einBild) => {
                 if (einBild._stichworte.indexOf(this._stichwortZumLoeschen) != -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort da ist
