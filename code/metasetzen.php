@@ -133,7 +133,7 @@ foreach ($bildNamen as $z2 => $bild) {
             //Nun wird der binäre Code zum Einbetten in die Bilddatei erzeugt
 
             $abschnitt = (int) substr($feld, 0, 1); //Die 2 von 2#025
-            $unterabschnitt = (int) substr($feld, 2, 3); //Die 25 von 2#025
+            $unterabschnitt = (int) substr($feld, 2, 3); //Die 025 von 2#025
 
             //binäre Magic
             foreach ($feldNeu as $i1) {
