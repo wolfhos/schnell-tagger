@@ -10,7 +10,7 @@ console.log('Schnell-Tagger Version 0.2; AGPL 3: https://www.gnu.org/licenses/ag
 
 
 //Konfiguration hier ändern
-const startverzeichnis: string = 'e:/web';//Muss mit dem Document Root des Webserversübereinstimmen 
+const startverzeichnis: string = 'c:/web';//Muss mit dem Document Root des Webserversübereinstimmen 
 const dateiHistory: string = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
 const sicherheitskopien: boolean = true; //Sollen Sicherheitskopien gemacht werden? Voreinstellung ist ja (true)
 //const urheber: boolean = false; //Urhebereintrag in den Bildern? Siehe Readme.//Achtung funktioniert noch nicht!
@@ -237,6 +237,7 @@ class RahmenLinks {
             initiierung._rahmenRechts.anzahlMarkiertAnzeigen(); //Die Anzahl der markierten Bilder zurücksetzen
             initiierung._rahmenLinks.unterverzeichnisseAnzeigen();
             initiierung._rahmenMitte.bilderAnzeigen();
+            initiierung._rahmenRechts.stichworteAnzeigen(); //Die Stichwörter zurücksetzen
         }
 
 

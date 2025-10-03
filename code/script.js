@@ -7,7 +7,7 @@ geändert bis zur nächsten Version
 */
 console.log('Schnell-Tagger Version 0.2; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
 //Konfiguration hier ändern
-const startverzeichnis = 'e:/web'; //Muss mit dem Document Root des Webserversübereinstimmen 
+const startverzeichnis = 'c:/web'; //Muss mit dem Document Root des Webserversübereinstimmen 
 const dateiHistory = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
 const sicherheitskopien = true; //Sollen Sicherheitskopien gemacht werden? Voreinstellung ist ja (true)
 //const urheber: boolean = false; //Urhebereintrag in den Bildern? Siehe Readme.//Achtung funktioniert noch nicht!
@@ -151,6 +151,7 @@ class RahmenLinks {
             initiierung._rahmenRechts.anzahlMarkiertAnzeigen(); //Die Anzahl der markierten Bilder zurücksetzen
             initiierung._rahmenLinks.unterverzeichnisseAnzeigen();
             initiierung._rahmenMitte.bilderAnzeigen();
+            initiierung._rahmenRechts.stichworteAnzeigen(); //Die Stichwörter zurücksetzen
         }
     }
 }
