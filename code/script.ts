@@ -483,87 +483,7 @@ class RahmenRechts {
 
     }
 
-    ///-------------------------
-
-    //Methode für das Löschen eines Stichworts aus den markierten Bildernn
-    stichwortLoeschen(): void {
-
-        this._schreibenBlockiert = true; //Es startet eine Verarbeitung und andere Zugriffe werden blockiert
-        this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
-
-        let bildZugefuegt: boolean = false; //Wurde ein Bild der Liste für PHP zugefügt?
-
-        //if (this._stichwortNeu == '') document.getElementById("nachricht_rechts")!.innerHTML = "<i>Bitte ein neues Stichwort eingeben</i>";//Wenn Go ausgelöst, aber Stichwort leer
-
-        //else { //Nur wenn ein Stichwort eingegeben wurde
-
-        //Vorbereiten für die PHP-Übergabe	
-        this._bilderNurNamen.push(sicherheitskopien.toString()); //Sicherheitskopien ja/nein für die PHP-Übergabe
-        //this._bilderNurNamen.push(urheber.toString()); //Urheber ja/nein
-
-        this._bilderNurNamen.push(this._stichwortZumLoeschen); //Das neue Stichwort 
-
-        //aus der Bilderliste werden dann die Namen geholt und zugefügt
-
-        if (this._listeZuBearbeitendeBilder.length != 0) { //Wenn die Liste der zu löschenden Bilder nicht leer ist, wird sie in HTML umgewandelt und der Löschliste zugefügt
-
-            initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild: Bild) => {
-
-                //if (einBild._stichworte.indexOf(this._stichwortNeu) == -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort noch nicht da ist
-                this._bilderNurNamen.push(einBild._pfad + '/' + einBild._name);
-
-                bildZugefuegt = true; //Es wurde ein Bild zugefügt
-
-
-
-            });
-
-        }
-
-        console.log('metasetzen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
-
-        
-
-
-        //PHP-Übergabe mit fetch/POST
-        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe gestartet
-
-            document.getElementById("nachricht_rechts")!.innerHTML = "<i>... in Arbeit</i>";//
-            fetch('loeschen.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this._bilderNurNamen)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Es gab ein Problem beim Zufügen der Stichwörter auf dem Server');
-                    }
-                    console.log('HTTP-Status loeschen: ' + response.status);
-
-                    return response.json();
-                })
-
-                .then(data => {
-                    console.log('loeschen Antwort fetch: ' + JSON.stringify(data));
-
-                    this.aktualisierenBearbeiteteBilder();//Stichwort auch in die Bilderliste übernehmen...
-                    this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
-                    document.getElementById("nachricht_rechts")!.innerHTML = "<i>fertig</i>";//
-                    this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
-
-                    return data;
-                });
-
-        }
-        else this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
-
-    }
-
-
-    ///-----
-
+    
     //Akualierung der Liste der makrierten Bilder mit dem neuen Stichwort
     aktualisierenBearbeiteteBilder(): void {
 
@@ -663,6 +583,82 @@ class RahmenRechts {
 
         //Der weitere Ablauf ergibt sich, je nachdem ob der Anwender den Ja- oder Nein-Buttons klickt
     }
+
+    ///-------------------------
+
+    //Methode für das Löschen eines Stichworts aus den markierten Bildernn
+    stichwortLoeschen(): void {
+
+        this._schreibenBlockiert = true; //Es startet eine Verarbeitung und andere Zugriffe werden blockiert
+        this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
+
+        let bildZugefuegt: boolean = false; //Wurde ein Bild der Liste für PHP zugefügt?
+
+        //Vorbereiten für die PHP-Übergabe	
+        this._bilderNurNamen.push(sicherheitskopien.toString()); //Sicherheitskopien ja/nein für die PHP-Übergabe
+
+        this._bilderNurNamen.push(this._stichwortZumLoeschen); //Das neue Stichwort 
+
+        //aus der Bilderliste werden dann die Namen geholt und zugefügt
+        if (this._listeZuBearbeitendeBilder.length != 0) { //Wenn die Liste der zu löschenden Bilder nicht leer ist, wird sie in HTML umgewandelt und der Löschliste zugefügt
+
+            initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild: Bild) => {
+
+                this._bilderNurNamen.push(einBild._pfad + '/' + einBild._name);
+
+                bildZugefuegt = true; //Es wurde ein Bild zugefügt
+
+
+
+            });
+
+        }
+
+        console.log('metasetzen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
+
+        
+
+
+        //PHP-Übergabe mit fetch/POST
+        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe gestartet
+
+            document.getElementById("nachricht_rechts")!.innerHTML = "<i>... in Arbeit</i>";//
+            fetch('loeschen.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this._bilderNurNamen)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Es gab ein Problem beim Löschen der Stichwörter auf dem Server');
+                    }
+                    console.log('HTTP-Status loeschen: ' + response.status);
+
+                    return response.json();
+                })
+
+                .then(data => {
+                    console.log('loeschen Antwort fetch: ' + JSON.stringify(data));
+
+                    this.aktualisierenBearbeiteteBilder();//Stichwort auch in die Bilderliste übernehmen...
+                    this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
+                    document.getElementById("nachricht_rechts")!.innerHTML = "<i>fertig</i>";//
+                    this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
+                    this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird wieder geleert
+
+                    return data;
+                });
+
+        }
+        else this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
+
+    }
+
+
+    ///-----
+
 
 }
 
@@ -859,6 +855,11 @@ class Initiierung {
             console.log(event.target.innerText);
 
             if (event.target.innerText == "Ja") { //Ja  geklickt
+
+                let jaNeinDiv: any = document.getElementById("jaNein");
+                jaNeinDiv!.style.visibility = "hidden"; //Die Ja/Nein-Abfrage wird wieder unsichtbar geschaltet
+                initiierung._rahmenRechts.stichwortLoeschen(); //Das Löschen wird gestartet
+                               
 
             }
 
