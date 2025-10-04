@@ -585,8 +585,8 @@ class RahmenRechts {
             // ein oder mehrere Bilder?
             let loeschText1: string = "folgenden";
             let loeschText2: string = "folgendem";
-            let loeschText3: string = "Bildern";
-            let loeschText4: string = "Bild";
+            let loeschText3: string = "Bildern:";
+            let loeschText4: string = "Bild:";
 
             if (this._listeZuBearbeitendeBilder.length == 1) { //ein Bild
 
@@ -594,7 +594,7 @@ class RahmenRechts {
             }
             else { //mehrere Bilder
 
-                jaNeinListe!.innerHTML = "Aus " + loeschText1 + " " + listeLoeschbilderHtml.length + " " + loeschText3 + listeLoeschbilderHtml;
+                jaNeinListe!.innerHTML = "Aus " + loeschText1 + " <b>" + listeLoeschbilderHtml.length + "</b> " + loeschText3 + listeLoeschbilderHtml;
             }
         }
 

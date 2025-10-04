@@ -369,7 +369,7 @@ class RahmenRechts {
                 jaNeinListe.innerHTML = "Aus " + loeschText2 + " " + loeschText4 + listeLoeschbilderHtml;
             }
             else { //mehrere Bilder
-                jaNeinListe.innerHTML = "Aus " + loeschText1 + " " + listeLoeschbilderHtml.length + " " + loeschText3 + listeLoeschbilderHtml;
+                jaNeinListe.innerHTML = "Aus " + loeschText1 + " <b>" + listeLoeschbilderHtml.length + "</b> " + loeschText3 + listeLoeschbilderHtml;
             }
         }
         //Wenn Schreiben blockiert ist, wird eine entsprechende Nachricht angezeigt

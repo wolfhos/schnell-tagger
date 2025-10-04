@@ -180,10 +180,10 @@ a {
     border : 1em solid red;
     background-color: white;
      text-align: center;
-     width: 17em;
+     width: 19em;
      position: absolute;
     top: 9em;
-    left: 46em;
+    left: 60em;
     visibility: hidden
     
 
@@ -192,19 +192,22 @@ a {
  #schalterJa {
         
 
-        border: 0.1em solid red;
+        border: 0.3em solid red;
         text-align: center;
         font-weight: bold;
-        width: 8em;
+        width: 9em;
+        height: 3em;
 
     
  }
 
  #schalterNein {
-        border: 0.1em solid #000000;
+        border: 0.3em solid #000000;
         text-align: center;
         font-weight: bold;
-        width: 8em;
+        width: 9em;
+        height: 3em;
+
         
  }
 
