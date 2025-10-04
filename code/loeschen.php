@@ -8,7 +8,7 @@ $uebergabeOhnehtml = html_entity_decode($uebergabeJson, ENT_QUOTES, "UTF-8"); //
 $uebergabe = json_decode($uebergabeOhnehtml, true);
 
 
-//$uebergabe = ["true", "Kyra", "c:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2256.jpg", "c:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2261.jpg"]; //Bug
+//Bug: $uebergabe = ["true", "Kyra", "c:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2256.jpg", "c:/web/schnell-tagger/code/testbilder/2501 Winter/DSC_2261.jpg"]; //Bug
 
 
 //Die Übergabe wird zerlegt
@@ -56,7 +56,7 @@ if ($sicherheitskopieJaNein == "true") {
 
 
 
-//Die Felder werden nun Bild für Bild zugefügt
+//Das Stichwort wird Bild für Bild gelöscht
 foreach ($bildNamen as $z2 => $bild) {
 
 
@@ -67,35 +67,24 @@ foreach ($bildNamen as $z2 => $bild) {
         $iptcOriginal = iptcparse($getIPTC["APP13"]);
     }
 
-    //echo "Vorhandene IPTC-Felder: $bild<br>";
-    //var_dump($iptcOriginal);
 
-    //Variable für den binären Code, der in die Bilddatei eingebettet wird. Hier noch leer
+    //Variable für den binären Code, der in die Bilddatei neu eingebettet wird. Hier noch leer
     $zumEinbetten = "";
 
 
     $feldNeu = [];
 
+    //Alle Felder des Headers werden durchlaufen...
     foreach ($iptcOriginal as $i => $einiptc) {
 
+        //... aber nur bei 2#025 (Keywords) passiert etwas
         if ($i == "2#025") {
 
-            //var_dump($einiptc);
-            //echo "<br>";
-
-
-            $feldNeu = array_diff($einiptc, [$stichwortZumLoeschen]);
-
-            //var_dump($feldNeu);
-            //echo "<br>";
-
+            $feldNeu = array_diff($einiptc, [$stichwortZumLoeschen]); //Stichwort entfernen
         }
-
 
     }
 
-
-    //if ($feldNeu != []) {
 
     //Nun wird der binäre Code zum Einbetten in die Bilddatei erzeugt
 
@@ -104,17 +93,12 @@ foreach ($bildNamen as $z2 => $bild) {
 
     //binäre Magic
     foreach ($feldNeu as $i1) {
-        //echo "i1: $i1<br>";
+    
         $laenge = strlen($i1);
         $zumEinbetten .= chr(0x1c) . chr($abschnitt) . chr($unterabschnitt) . chr($laenge >> 8) . chr($laenge & 0xff) . $i1; //
     }
 
-    //echo "Binär zum Einbetten: <br>";
-    //echo $zumEinbetten;
-
-
-
-
+    
 
 
 /// Der  binäre Code wird in das Bild im IPTC-Abschnitt eingefügt. Für iptcembed gibt es drei Modi: 
@@ -134,13 +118,9 @@ foreach ($bildNamen as $z2 => $bild) {
     $writeist = fwrite($datei, $bildMitNeuenTags);
     fclose($datei);
 
-
-
-
-
-//*/
-
 }
+
+
 $status[] = "ok"; //Statusmeldung
 
 echo json_encode($status);

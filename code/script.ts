@@ -472,13 +472,18 @@ class RahmenRechts {
                     this.aktualisierenBearbeiteteBilder();//Stichwort auch in die Bilderliste übernehmen...
                     this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
                     document.getElementById("nachricht_rechts")!.innerHTML = "<i>fertig</i>";//
+                    this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird wieder geleert
                     this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
 
                     return data;
                 });
 
         }
-        else this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
+        else {
+
+            this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird geleert, auch wenn kein Bild zugefügt wurde                    
+            this._schreibenBlockiert = false; //Schreiben wird freigegeben
+        }
 
     }
 
@@ -491,8 +496,6 @@ class RahmenRechts {
 
             if (einBild._stichworte.indexOf(this._stichwortNeu) == -1) { //Wenn das Stichwort noch nicht in der Liste ist, kommt es ins Feld
 
-                //console.log('Stichworte im Bild ' + einBild._stichworte)
-
                 einBild._stichworte.push(this._stichwortNeu);
 
             }
@@ -502,6 +505,7 @@ class RahmenRechts {
     }
 
 
+    //Auch nach dem Löschen wird Stichwortliste aktualisiert
     aktualisierenNachDemLoeschen(): void {
 
         initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild: Bild) => {
@@ -509,10 +513,7 @@ class RahmenRechts {
 
             const index = einBild._stichworte.indexOf(this._stichwortZumLoeschen);
 
-            if (index !== -1) {
-                einBild._stichworte.splice(index, 1); // Entfernt 1 Element ab dem gefundenen Index
-            }
-
+            if (index !== -1) einBild._stichworte.splice(index, 1); // Entfernt 1 Element ab dem gefundenen Index
 
         });
 
@@ -553,23 +554,22 @@ class RahmenRechts {
     //Löschen vorbereiten
     vorbereitungLoeschen(): void {
 
-
-        //console.log('Bug: Vorbereitung Liste zu bearbeitenden Bilder vor dem Löschen: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
-
         //Prüfen, ob Schreiben blockiert ist
         if (this._schreibenBlockiert == false) {
 
-            this._schreibenBlockiert = true; //Löschen wird gestartet, Schreiben wird blockiert
-            //Liste der Bilder, aus denen das Stichwort gelöscht werden soll aus den markierten Bildern suchen
+            this._schreibenBlockiert = true; //Schreiben wird blockiert
+
+            //Liste der Bilder, aus denen das Stichwort gelöscht werden soll, aus den markierten Bildern suchen
             initiierung._rahmenMitte._markierteBilder.forEach((einBild: Bild) => {
 
                 if (einBild._stichworte.indexOf(this._stichwortZumLoeschen) != -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort da ist
                     this._listeZuBearbeitendeBilder.push(einBild);
                 }
 
-                console.log('Liste zu bearbeitenden Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
 
             });
+
+            console.log('Liste zu löschenden Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
 
             //Anzeigen der Sicherheitsabfrage
             let jaNeinDiv: any = document.getElementById("jaNein");
@@ -599,19 +599,16 @@ class RahmenRechts {
         }
 
         //Wenn Schreiben blockiert ist, wird eine entsprechende Nachricht angezeigt
-        else document.getElementById("nachricht_rechts")!.innerHTML = "<i>Bitte warten: work in progress</i>";//Falls noch eine Verarbeitung läuft
+        else document.getElementById("nachricht_rechts")!.innerHTML = "<i>Bitte warten: work in progress</i>";
 
         //Der weitere Ablauf ergibt sich, je nachdem ob der Anwender den Ja- oder Nein-Buttons klickt
     }
 
-    ///-------------------------
 
     //Methode für das Löschen eines Stichworts aus den markierten Bildernn
     stichwortLoeschen(): void {
 
-
-
-        this._schreibenBlockiert = true; //Es startet eine Verarbeitung und andere Zugriffe werden blockiert
+        this._schreibenBlockiert = true; //Zugriff blockieren
         this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
 
         let bildZugefuegt: boolean = false; //Wurde ein Bild der Liste für PHP zugefügt?
@@ -619,7 +616,7 @@ class RahmenRechts {
         //Vorbereiten für die PHP-Übergabe	
         this._bilderNurNamen.push(sicherheitskopien.toString()); //Sicherheitskopien ja/nein für die PHP-Übergabe
 
-        this._bilderNurNamen.push(this._stichwortZumLoeschen); //Das neue Stichwort 
+        this._bilderNurNamen.push(this._stichwortZumLoeschen); //Das Stichwort zum Löschen 
 
         //aus der Bilderliste werden dann die Namen geholt und zugefügt
         if (this._listeZuBearbeitendeBilder.length != 0) { //Wenn die Liste der zu löschenden Bilder nicht leer ist, wird sie in HTML umgewandelt und der Löschliste zugefügt
@@ -630,19 +627,15 @@ class RahmenRechts {
 
                 bildZugefuegt = true; //Es wurde ein Bild zugefügt
 
-
-
             });
 
         }
 
-        console.log('metasetzen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
-
-
+        console.log('loeschen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
 
 
         //PHP-Übergabe mit fetch/POST
-        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe  gestartet
+        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe gestartet
 
             document.getElementById("nachricht_rechts")!.innerHTML = "<i>... in Arbeit</i>";//
             fetch('loeschen.php', {
@@ -676,13 +669,15 @@ class RahmenRechts {
                 });
 
         }
-        else this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
+        else {
+
+            this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird geleert, auch wenn kein Bild gelöscht wurde
+            this._stichwortZumLoeschen = ''; //Das zu löschende Stichwort wird wieder geleert
+
+            this._schreibenBlockiert = false; //Schreiben wird freigegeben
+        }
 
     }
-
-
-    ///-----
-
 
 }
 
@@ -864,6 +859,10 @@ class Initiierung {
 
         listenerStichwoerter.addEventListener('click', function (event: any) {
 
+            if (initiierung._rahmenRechts._schreibenBlockiert == true) {
+                console.log('Löschen blockiert, da noch eine Verarbeitung läuft');
+                return;
+            } //Wenn Schreiben blockiert ist, wird das Löschen nicht gestartet
             initiierung._rahmenRechts._stichwortZumLoeschen = event.target.innerText; // Das angeklickte Stichwort wird gespeichert
             console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLoeschen);
 

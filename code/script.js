@@ -294,6 +294,7 @@ class RahmenRechts {
                 this.aktualisierenBearbeiteteBilder(); //Stichwort auch in die Bilderliste übernehmen...
                 this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
                 document.getElementById("nachricht_rechts").innerHTML = "<i>fertig</i>"; //
+                this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird wieder geleert
                 this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
                 return data;
             });
@@ -363,8 +364,8 @@ class RahmenRechts {
             // ein oder mehrere Bilder?
             let loeschText1 = "folgenden";
             let loeschText2 = "folgendem";
-            let loeschText3 = "Bildern";
-            let loeschText4 = "Bild";
+            let loeschText3 = "Bildern:";
+            let loeschText4 = "Bild:";
             if (this._listeZuBearbeitendeBilder.length == 1) { //ein Bild
                 jaNeinListe.innerHTML = "Aus " + loeschText2 + " " + loeschText4 + listeLoeschbilderHtml;
             }
@@ -525,6 +526,10 @@ class Initiierung {
         //Listner auf der Liste der Stichwörter, um ein Löschen auszulösen
         let listenerStichwoerter = document.getElementById('allestichwoerter');
         listenerStichwoerter.addEventListener('click', function (event) {
+            if (initiierung._rahmenRechts._schreibenBlockiert == true) {
+                console.log('Löschen blockiert, da noch eine Verarbeitung läuft');
+                return;
+            } //Wenn Schreiben blockiert ist, wird das Löschen nicht gestartet
             initiierung._rahmenRechts._stichwortZumLoeschen = event.target.innerText; // Das angeklickte Stichwort wird gespeichert
             console.log('Stichwort-Inhalt: ' + initiierung._rahmenRechts._stichwortZumLoeschen);
             initiierung._rahmenRechts.vorbereitungLoeschen(); //Aufruf der Ja/Nein-Abfrage zum Löschen eines Stichworts
