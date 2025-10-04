@@ -193,7 +193,6 @@ class RahmenLinks {
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._unterverzeichnisse.forEach((einOrdner: string) => {
 
-            console.log('Bug Ordner: ' + einOrdner);
 
             if (einOrdner != 'schnell-tagger_sec')  //Das Sicherheitskopienverzeichnis wird nicht angezeigt
                 htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
@@ -483,7 +482,7 @@ class RahmenRechts {
 
     }
 
-    
+
     //Akualierung der Liste der makrierten Bilder mit dem neuen Stichwort
     aktualisierenBearbeiteteBilder(): void {
 
@@ -501,6 +500,24 @@ class RahmenRechts {
         });
 
     }
+
+
+    aktualisierenNachDemLoeschen(): void {
+
+        initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild: Bild) => {
+
+
+            const index = einBild._stichworte.indexOf(this._stichwortZumLoeschen);
+
+            if (index !== -1) {
+                einBild._stichworte.splice(index, 1); // Entfernt 1 Element ab dem gefundenen Index
+            }
+
+
+        });
+
+    }
+
 
     anzahlMarkiertAnzeigen(): void { //Anzahl der markierten Bilder rechts oben anzeigen
 
@@ -536,6 +553,9 @@ class RahmenRechts {
     //Löschen vorbereiten
     vorbereitungLoeschen(): void {
 
+
+        //console.log('Bug: Vorbereitung Liste zu bearbeitenden Bilder vor dem Löschen: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
+
         //Prüfen, ob Schreiben blockiert ist
         if (this._schreibenBlockiert == false) {
 
@@ -547,7 +567,7 @@ class RahmenRechts {
                     this._listeZuBearbeitendeBilder.push(einBild);
                 }
 
-                console.log('Liste zu löschende Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
+                console.log('Liste zu bearbeitenden Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
 
             });
 
@@ -589,6 +609,8 @@ class RahmenRechts {
     //Methode für das Löschen eines Stichworts aus den markierten Bildernn
     stichwortLoeschen(): void {
 
+
+
         this._schreibenBlockiert = true; //Es startet eine Verarbeitung und andere Zugriffe werden blockiert
         this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
 
@@ -616,7 +638,7 @@ class RahmenRechts {
 
         console.log('metasetzen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
 
-        
+
 
 
         //PHP-Übergabe mit fetch/POST
@@ -642,11 +664,13 @@ class RahmenRechts {
                 .then(data => {
                     console.log('loeschen Antwort fetch: ' + JSON.stringify(data));
 
-                    this.aktualisierenBearbeiteteBilder();//Stichwort auch in die Bilderliste übernehmen...
+                    this.aktualisierenNachDemLoeschen();//Stichwort aus der Bilderliste löschen...
                     this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
                     document.getElementById("nachricht_rechts")!.innerHTML = "<i>fertig</i>";//
                     this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
                     this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird wieder geleert
+                    this._stichwortZumLoeschen = ''; //Das zu löschende Stichwort wird wieder geleert
+
 
                     return data;
                 });
@@ -859,7 +883,7 @@ class Initiierung {
                 let jaNeinDiv: any = document.getElementById("jaNein");
                 jaNeinDiv!.style.visibility = "hidden"; //Die Ja/Nein-Abfrage wird wieder unsichtbar geschaltet
                 initiierung._rahmenRechts.stichwortLoeschen(); //Das Löschen wird gestartet
-                               
+
 
             }
 

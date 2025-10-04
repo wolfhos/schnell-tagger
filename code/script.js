@@ -120,7 +120,6 @@ class RahmenLinks {
         }
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._unterverzeichnisse.forEach((einOrdner) => {
-            console.log('Bug Ordner: ' + einOrdner);
             if (einOrdner != 'schnell-tagger_sec') //Das Sicherheitskopienverzeichnis wird nicht angezeigt
                 htmlZumAnzeigen = htmlZumAnzeigen + '<p class=\"ordner\">' + einOrdner + '</p>';
         });
@@ -311,6 +310,14 @@ class RahmenRechts {
             }
         });
     }
+    aktualisierenNachDemLoeschen() {
+        initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild) => {
+            const index = einBild._stichworte.indexOf(this._stichwortZumLoeschen);
+            if (index !== -1) {
+                einBild._stichworte.splice(index, 1); // Entfernt 1 Element ab dem gefundenen Index
+            }
+        });
+    }
     anzahlMarkiertAnzeigen() {
         let markiertZaehler = initiierung._rahmenMitte._markierteBilder.length; //Anzahl der markierten Bilder
         let bild_oder_bilder = "Bilder";
@@ -335,6 +342,7 @@ class RahmenRechts {
     }
     //Löschen vorbereiten
     vorbereitungLoeschen() {
+        //console.log('Bug: Vorbereitung Liste zu bearbeitenden Bilder vor dem Löschen: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
         //Prüfen, ob Schreiben blockiert ist
         if (this._schreibenBlockiert == false) {
             this._schreibenBlockiert = true; //Löschen wird gestartet, Schreiben wird blockiert
@@ -343,7 +351,7 @@ class RahmenRechts {
                 if (einBild._stichworte.indexOf(this._stichwortZumLoeschen) != -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort da ist
                     this._listeZuBearbeitendeBilder.push(einBild);
                 }
-                console.log('Liste zu löschende Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
+                console.log('Liste zu bearbeitenden Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
             });
             //Anzeigen der Sicherheitsabfrage
             let jaNeinDiv = document.getElementById("jaNein");
@@ -405,11 +413,12 @@ class RahmenRechts {
             })
                 .then(data => {
                 console.log('loeschen Antwort fetch: ' + JSON.stringify(data));
-                this.aktualisierenBearbeiteteBilder(); //Stichwort auch in die Bilderliste übernehmen...
+                this.aktualisierenNachDemLoeschen(); //Stichwort aus der Bilderliste löschen...
                 this.stichworteAnzeigen(); //... und alle Stichwörter rechts neu anzeigen
                 document.getElementById("nachricht_rechts").innerHTML = "<i>fertig</i>"; //
                 this._schreibenBlockiert = false; //Schreiben wird wieder freigegeben
                 this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird wieder geleert
+                this._stichwortZumLoeschen = ''; //Das zu löschende Stichwort wird wieder geleert
                 return data;
             });
         }
