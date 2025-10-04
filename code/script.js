@@ -1,11 +1,8 @@
 /*
 geändert bis zur nächsten Version
-- Eingabefeld wird geleert, wenn es angeklickt wird
-- Sicherheitskopien werden nur in einem Verzeichnis gespeichert
-- Verzeichnis mit Sicherheitskopien schnell-tagger_sec wird nicht mehr angezeigt
 
 */
-console.log('Schnell-Tagger Version 0.2; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
+console.log('Schnell-Tagger Version 0.3; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
 //Konfiguration hier ändern
 const startverzeichnis = 'c:/web'; //Muss mit dem Document Root des Webserversübereinstimmen 
 const dateiHistory = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
@@ -299,24 +296,25 @@ class RahmenRechts {
                 return data;
             });
         }
-        else
-            this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
+        else {
+            this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird geleert, auch wenn kein Bild zugefügt wurde                    
+            this._schreibenBlockiert = false; //Schreiben wird freigegeben
+        }
     }
     //Akualierung der Liste der makrierten Bilder mit dem neuen Stichwort
     aktualisierenBearbeiteteBilder() {
         initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild) => {
             if (einBild._stichworte.indexOf(this._stichwortNeu) == -1) { //Wenn das Stichwort noch nicht in der Liste ist, kommt es ins Feld
-                //console.log('Stichworte im Bild ' + einBild._stichworte)
                 einBild._stichworte.push(this._stichwortNeu);
             }
         });
     }
+    //Auch nach dem Löschen wird Stichwortliste aktualisiert
     aktualisierenNachDemLoeschen() {
         initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild) => {
             const index = einBild._stichworte.indexOf(this._stichwortZumLoeschen);
-            if (index !== -1) {
+            if (index !== -1)
                 einBild._stichworte.splice(index, 1); // Entfernt 1 Element ab dem gefundenen Index
-            }
         });
     }
     anzahlMarkiertAnzeigen() {
@@ -343,17 +341,16 @@ class RahmenRechts {
     }
     //Löschen vorbereiten
     vorbereitungLoeschen() {
-        //console.log('Bug: Vorbereitung Liste zu bearbeitenden Bilder vor dem Löschen: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
         //Prüfen, ob Schreiben blockiert ist
         if (this._schreibenBlockiert == false) {
-            this._schreibenBlockiert = true; //Löschen wird gestartet, Schreiben wird blockiert
-            //Liste der Bilder, aus denen das Stichwort gelöscht werden soll aus den markierten Bildern suchen
+            this._schreibenBlockiert = true; //Schreiben wird blockiert
+            //Liste der Bilder, aus denen das Stichwort gelöscht werden soll, aus den markierten Bildern suchen
             initiierung._rahmenMitte._markierteBilder.forEach((einBild) => {
                 if (einBild._stichworte.indexOf(this._stichwortZumLoeschen) != -1) { //Das Bild wird der Liste nur zugefügt, wenn das Stichwort da ist
                     this._listeZuBearbeitendeBilder.push(einBild);
                 }
-                console.log('Liste zu bearbeitenden Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
             });
+            console.log('Liste zu löschenden Bilder: ' + JSON.stringify(this._listeZuBearbeitendeBilder) + ' Anzahl: ' + this._listeZuBearbeitendeBilder.length);
             //Anzeigen der Sicherheitsabfrage
             let jaNeinDiv = document.getElementById("jaNein");
             jaNeinDiv.style.visibility = "visible";
@@ -375,18 +372,17 @@ class RahmenRechts {
         }
         //Wenn Schreiben blockiert ist, wird eine entsprechende Nachricht angezeigt
         else
-            document.getElementById("nachricht_rechts").innerHTML = "<i>Bitte warten: work in progress</i>"; //Falls noch eine Verarbeitung läuft
+            document.getElementById("nachricht_rechts").innerHTML = "<i>Bitte warten: work in progress</i>";
         //Der weitere Ablauf ergibt sich, je nachdem ob der Anwender den Ja- oder Nein-Buttons klickt
     }
-    ///-------------------------
     //Methode für das Löschen eines Stichworts aus den markierten Bildernn
     stichwortLoeschen() {
-        this._schreibenBlockiert = true; //Es startet eine Verarbeitung und andere Zugriffe werden blockiert
+        this._schreibenBlockiert = true; //Zugriff blockieren
         this._bilderNurNamen = []; //Liste der Bildernamen für die PHP-Übergabe, wird erstmal geleert
         let bildZugefuegt = false; //Wurde ein Bild der Liste für PHP zugefügt?
         //Vorbereiten für die PHP-Übergabe	
         this._bilderNurNamen.push(sicherheitskopien.toString()); //Sicherheitskopien ja/nein für die PHP-Übergabe
-        this._bilderNurNamen.push(this._stichwortZumLoeschen); //Das neue Stichwort 
+        this._bilderNurNamen.push(this._stichwortZumLoeschen); //Das Stichwort zum Löschen 
         //aus der Bilderliste werden dann die Namen geholt und zugefügt
         if (this._listeZuBearbeitendeBilder.length != 0) { //Wenn die Liste der zu löschenden Bilder nicht leer ist, wird sie in HTML umgewandelt und der Löschliste zugefügt
             initiierung._rahmenRechts._listeZuBearbeitendeBilder.forEach((einBild) => {
@@ -394,9 +390,9 @@ class RahmenRechts {
                 bildZugefuegt = true; //Es wurde ein Bild zugefügt
             });
         }
-        console.log('metasetzen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
+        console.log('loeschen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
         //PHP-Übergabe mit fetch/POST
-        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe  gestartet
+        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe gestartet
             document.getElementById("nachricht_rechts").innerHTML = "<i>... in Arbeit</i>"; //
             fetch('loeschen.php', {
                 method: 'POST',
@@ -423,8 +419,11 @@ class RahmenRechts {
                 return data;
             });
         }
-        else
-            this._schreibenBlockiert = false; //Schreiben wird freigegeben, auch wenn kein Bild zugefügt wurde
+        else {
+            this._listeZuBearbeitendeBilder = []; //Die Liste der zu bearbeitenden Bilder wird geleert, auch wenn kein Bild gelöscht wurde
+            this._stichwortZumLoeschen = ''; //Das zu löschende Stichwort wird wieder geleert
+            this._schreibenBlockiert = false; //Schreiben wird freigegeben
+        }
     }
 }
 ///--------------------------- 
