@@ -8,7 +8,7 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 
 ## Wichtige Infos vorweg
 
-* Die Anwendung ist für eimem lokalen und **nicht für den Einsatz im öffentlichen Netz gedacht**
+* Die Anwendung ist für einen lokalen und **nicht für den Einsatz im öffentlichen Netz gedacht**
     1. Es gibt **keine ausreichenden Sicherheitsprüfungen** in den PHP-Skripten
     2. Die Anwendung lädt alle **Bilder komplett und unkomprimiert**, was für den Betrieb über das Internet ungeeignet ist.
 * Wenn der Schreibprozess gestört wird, können Bilder kaputt gehen. **Es empfiehlt sich, die Funktion für Sicherheitskopien zu verwenden** (was auch die Voreinstellung ist). Sie kopiert die Bilder vor dem Schreiben des Headers.
