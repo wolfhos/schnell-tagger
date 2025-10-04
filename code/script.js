@@ -395,7 +395,7 @@ class RahmenRechts {
         }
         console.log('metasetzen Abfrage fetch: ' + JSON.stringify(this._bilderNurNamen));
         //PHP-Übergabe mit fetch/POST
-        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe gestartet
+        if (bildZugefuegt) { //Nur wenn Bildernamen in der Liste sind, wird die PHP-Übergabe  gestartet
             document.getElementById("nachricht_rechts").innerHTML = "<i>... in Arbeit</i>"; //
             fetch('loeschen.php', {
                 method: 'POST',

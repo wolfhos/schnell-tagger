@@ -1,6 +1,6 @@
 # Schnell-Tagger
 
-Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw. Tags in JPEG-Bildern schnell und einfach zu verwalten: lesen und schreiben (löschen soll folgen). Sie modifiziert dafür die IPTC-Header der Bilder (nicht aber die Exif. oder XMP-Header). Zum Betrieb sind ein Webserver und PHP erforderlich. Ich habe mit XAMPP 8.2.12 unter Win 11 gearbeitet. 
+Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw. Tags in JPEG-Bildern schnell und einfach zu verwalten: lesen, schreiben und löschen. Sie modifiziert dafür die IPTC-Header der Bilder (nicht aber die Exif. oder XMP-Header). Zum Betrieb sind ein Webserver und PHP erforderlich. Ich habe mit XAMPP 8.2.12 unter Win 11 gearbeitet. 
 
 Über die Weboberfläche lassen sich nur die IPTC-Stichwörter ändern, über die die Datei *felder.ini* jedoch **alle IPTC-Felder**.  
 
@@ -28,6 +28,7 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 * Im linken Fenster blättert man durch die Verzeichnisse, wobei in mittleren Fenster die jeweiligen JPEG-Bilder des aktuellen Verzeichnisses erscheinen
 * Bilder lassen sich markieren – auch mehrere – dann erscheinen im rechten Fenster alle Stichwörter der jeweilig markierten Bilder
 * Den markierten Bildern lässt sich im rechten Fenster nun ein Stichwort zufügen
+* Klickt man auf ein Stichwort, lässt sich dieses wieder löschen
 
 ## Sicherheitskopien
 
@@ -61,7 +62,6 @@ Das kann über die Datei *felder.ini* erfolgen, die alle Felder laut IPTC-Standa
 
 ## Was fehlt noch?
 * Die Konfiguration sollte über eine ini-Datei erfolgen
-* Stichwörter löschen fehlt schmerzlich
 * Ein Test unter Linux fehlt
 * Eine englische Version wäre wünschenswert
 * Und eine mobile Fassung ebenso
