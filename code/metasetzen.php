@@ -1,5 +1,5 @@
 <?php
-//Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'
+//Schnell-Tagger Version 0.3.2; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'
 
 /*Skript fügt das neue Stichwort von JavaScript und weitere Daten aus der Datei felder.ini den IPTC-Felder der Bilder hinzu
 Die Stichwörter (Keywords, Feld 2#025) kommen per POST aus dem JavaScript. Die anderen Felder werden aus der Datei felder.ini gelesen.

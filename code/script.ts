@@ -1,10 +1,10 @@
 /*
 geändert bis zur nächsten Version
-* Konfiguration vereinfacht
+
 
 */
 
-console.log('Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
+console.log('Schnell-Tagger Version 0.3.2; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
 
 
 //Konfiguration hier ändern
@@ -43,7 +43,6 @@ class Bild {
 class AktuellesVerzeichnis {
     _name: string;
     _unterverzeichnisse: string[];
-    _vorherigesVerzeichnis: string;
     _bilder: Bild[];
     _bilderNurNamen: string[];
 
@@ -51,7 +50,6 @@ class AktuellesVerzeichnis {
     constructor(name: string, vorherigesVerzeichnis: string) {
         this._name = name;
         this._unterverzeichnisse = new Array();
-        this._vorherigesVerzeichnis = vorherigesVerzeichnis;
         this._bilder = new Array();
         this._bilderNurNamen = new Array();
     }
@@ -215,7 +213,6 @@ class RahmenLinks {
 
 
         //Die belegten Variablen löschen
-        initiierung._aktuellesVerzeichnis._vorherigesVerzeichnis = initiierung._aktuellesVerzeichnis._name; //Das vorherige Verzeichnis wird auf das aktuelle gesetzt
         initiierung._aktuellesVerzeichnis._name = neuerPfad;
         initiierung._aktuellesVerzeichnis._unterverzeichnisse = [];
         initiierung._aktuellesVerzeichnis._bilder = [];
@@ -262,7 +259,7 @@ class RahmenMitte {
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._bilder.forEach((einBild: Bild) => {
 
-            console.log('Html-Pfad: ' + einBild._htmlPfad + ' Name: ' + einBild._name + ' ID: ' + einBild._id);
+            //console.log('Html-Pfad: ' + einBild._htmlPfad + ' Name: ' + einBild._name + ' ID: ' + einBild._id);
             htmlZumAnzeigen = htmlZumAnzeigen + '<img src="' + einBild._htmlPfad + '/' + einBild._name + '" alt="' + einBild._name + '" class="bild"' + ' id="' + einBild._id + '">';
 
         });
@@ -729,8 +726,19 @@ class Initiierung {
         //Listener für den Back-Button des Browsers
         window.addEventListener("popstate", (event: any) => {
 
+            let neuerPfad ='';
+            
+            if (initiierung._aktuellesVerzeichnis._name == startverzeichnis) neuerPfad = startverzeichnis; //Wenn das Verzeichnis das Startverzeichnis ist, wird der Pfad nicht abgeschnitten, denn es gbit kein übergeordnetes Verzeichnis 
+            
+            else { let position = initiierung._aktuellesVerzeichnis._name.lastIndexOf('/'); //Anderfalls: Das letzte / finden
+            neuerPfad = initiierung._aktuellesVerzeichnis._name.slice(0, position); //Das neue Verzeichnis ist der Rest
+            }
 
-            initiierung._rahmenLinks.verzeichnisNeuEinlesen(initiierung._aktuellesVerzeichnis._vorherigesVerzeichnis); //Bei einem Back-Button wird das vorherige Verzeichnis neu eingelesen
+            //console.log('Back-Button gedrückt, neues Verzeichnis: ' + neuerPfad);
+
+            
+            initiierung._rahmenLinks.verzeichnisNeuEinlesen(neuerPfad); //Bei einem Back-Button wird das vorherige Verzeichnis neu eingelesen
+
 
         });
 

@@ -1,9 +1,9 @@
 /*
 geändert bis zur nächsten Version
-* Konfiguration vereinfacht
+
 
 */
-console.log('Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
+console.log('Schnell-Tagger Version 0.3.2; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
 //Konfiguration hier ändern
 const startverzeichnis = '.'; //Wert nur ändern, wenn die Datei index.html und die Skripte nicht direkt im Dokumentenverzeichnis des Webservers liegen, sondern in einem Unterverzeichnis. Dann hier das Dokumentenverzeichnis des Webservers angeben, z.B. c:/xampp/htdocs.   
 const dateiHistory = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
@@ -27,7 +27,6 @@ class AktuellesVerzeichnis {
     constructor(name, vorherigesVerzeichnis) {
         this._name = name;
         this._unterverzeichnisse = new Array();
-        this._vorherigesVerzeichnis = vorherigesVerzeichnis;
         this._bilder = new Array();
         this._bilderNurNamen = new Array();
     }
@@ -132,7 +131,6 @@ class RahmenLinks {
     async verzeichnisNeuEinlesen(neuerPfad) {
         history.pushState({}, "", dateiHistory); ////Index-Datei bei jedem Verzeichniswechsel wieder in die History schreiben, damit der Back-Button neutralisiert ist
         //Die belegten Variablen löschen
-        initiierung._aktuellesVerzeichnis._vorherigesVerzeichnis = initiierung._aktuellesVerzeichnis._name; //Das vorherige Verzeichnis wird auf das aktuelle gesetzt
         initiierung._aktuellesVerzeichnis._name = neuerPfad;
         initiierung._aktuellesVerzeichnis._unterverzeichnisse = [];
         initiierung._aktuellesVerzeichnis._bilder = [];
@@ -162,7 +160,7 @@ class RahmenMitte {
         let htmlZumAnzeigen = '';
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._bilder.forEach((einBild) => {
-            console.log('Html-Pfad: ' + einBild._htmlPfad + ' Name: ' + einBild._name + ' ID: ' + einBild._id);
+            //console.log('Html-Pfad: ' + einBild._htmlPfad + ' Name: ' + einBild._name + ' ID: ' + einBild._id);
             htmlZumAnzeigen = htmlZumAnzeigen + '<img src="' + einBild._htmlPfad + '/' + einBild._name + '" alt="' + einBild._name + '" class="bild"' + ' id="' + einBild._id + '">';
         });
         let anzeigeMitte = document.getElementById('bilderfeldeinzeln');
@@ -455,7 +453,15 @@ class Initiierung {
         //----------------
         //Listener für den Back-Button des Browsers
         window.addEventListener("popstate", (event) => {
-            initiierung._rahmenLinks.verzeichnisNeuEinlesen(initiierung._aktuellesVerzeichnis._vorherigesVerzeichnis); //Bei einem Back-Button wird das vorherige Verzeichnis neu eingelesen
+            let neuerPfad = '';
+            if (initiierung._aktuellesVerzeichnis._name == startverzeichnis)
+                neuerPfad = startverzeichnis; //Wenn das Verzeichnis das Startverzeichnis ist, wird der Pfad nicht abgeschnitten, denn es gbit kein übergeordnetes Verzeichnis 
+            else {
+                let position = initiierung._aktuellesVerzeichnis._name.lastIndexOf('/'); //Anderfalls: Das letzte / finden
+                neuerPfad = initiierung._aktuellesVerzeichnis._name.slice(0, position); //Das neue Verzeichnis ist der Rest
+            }
+            //console.log('Back-Button gedrückt, neues Verzeichnis: ' + neuerPfad);
+            initiierung._rahmenLinks.verzeichnisNeuEinlesen(neuerPfad); //Bei einem Back-Button wird das vorherige Verzeichnis neu eingelesen
         });
         //Listener Abfragen der Strg-Taste
         document.addEventListener("keydown", function (event) {

@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.3.2
+* Konfiguration vereinfacht
+* Unschönes Verhalten des Backbuttons korrigiert
+
 ## v0.3.1
 * Oberflächliche Aufhübschungen
 
