@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.3.1
+* Oberflächliche Aufhübschungen
+
+
 ## v0.3
 
 * Löschen von Stichwörtern

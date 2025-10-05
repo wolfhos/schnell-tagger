@@ -2,7 +2,7 @@
 geändert bis zur nächsten Version
 
 */
-console.log('Schnell-Tagger Version 0.3; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
+console.log('Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');
 //Konfiguration hier ändern
 const startverzeichnis = 'c:/web'; //Muss mit dem Document Root des Webserversübereinstimmen 
 const dateiHistory = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 

@@ -1,5 +1,5 @@
 <?php
-
+//Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'
 error_reporting(0); //Fehlermeldungen abschalten
 
 //Übergabe POST aus dem JavaScript
@@ -124,7 +124,3 @@ foreach ($bildNamen as $z2 => $bild) {
 $status[] = "ok"; //Statusmeldung
 
 echo json_encode($status);
-
-
-
-//Schnell-Tagger Version 0.3; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'

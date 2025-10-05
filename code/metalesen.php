@@ -1,4 +1,6 @@
 <?php
+//Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'
+
 ///Skript liest die Metadaten für Keyword 2#025 aus einem Bild und gibt diese als JSON an fetch zurück
 
 error_reporting(0);
@@ -53,12 +55,3 @@ foreach ($bildnamen as $einBild) {
 $jshoh = json_encode($fertigeListe);
 
 echo $jshoh;
-
-
-
-
-
-//Schnell-Tagger Version 0.3; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger'
-
-
-?>
