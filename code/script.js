@@ -1,5 +1,6 @@
 /*
 geändert bis zur nächsten Version
+* Konfiguration vereinfacht
 
 */
 console.log('Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/agpl-3.0.de.html, Autor und Credit: Wolf Hosbach, http://www.wolf-hosbach.de, https://github.com/wolfhos/schnell-tagger');

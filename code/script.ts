@@ -1,5 +1,6 @@
 /*
 geändert bis zur nächsten Version
+* Konfiguration vereinfacht
 
 */
 
