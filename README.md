@@ -30,6 +30,22 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 * Den markierten Bildern lässt sich im rechten Fenster nun ein Stichwort zufügen
 * Klickt man auf ein Stichwort, lässt sich dieses wieder löschen
 
+
+## Installieren
+
+* Für den Betrieb sind ein Webserver und PHP erforderlich
+* Ein Webserver darf sicherheitstechnisch prinzipiell nur auf die Dateien innerhalb des Dokumenten-Ordners zugreifen, deswegen müssen die zu bearbeitenden Bilder auch in diesem oder einem Unterverzeichnis liegen. 
+
+## Konfiguration
+* Im Normalfall ist keine Konfiguration notwendig, wenn die Datei *index.html* und die Skripte direkt im Dokumenten-Ordner des Webserver liegen.  
+* Bei Apache findet sich die Konfiguration des Dokumenten-Ordners in der Datei *httpd.conf* als Eintrag *Document Root*, oft:
+    * `DocumentRoot "C:/xampp/htdocs"`
+      `<Directory "C:/xampp/htdocs">`
+* *Sonderfall:* Sollen die Schnell-Taggger-Skripte und Bilder in einem Unterordner liegen, so ist der komplette Pfad in die Konstante *startverzeichnis* im Skript *script.js* einzufügen, z.B.:
+    * Im JavaScirpt: `const startverzeichnis = 'C:/xampp/htdocs/schnell-taggger';`
+* *Sonderfall:* Wer die Datei *index.html* anders benennt, beispielsweise als Teil einer größeren Anwendung, muss den zugehörigen Eintrag in *script.js* ändern, wegen der Funktion des Back-Buttons des Browsers. Hier fehlt noch eine automatische Erkennung.
+    * `const dateiHistory = "./index_xyz.html";`
+
 ## Sicherheitskopien
 
 Standardmäßig ist eine Funktion für Sicherheitskopien aktiv, da Bilder beim Schreiben kaputt gehen können, wenn das Skript beim Schreibvorgang gestört wird, (fremder Zugriff auf die Datei, Serverabsturz o.ä.). Die Kopien landen im Unterordner *schnell-tagger_sec*. Erst dann beginnt der Schreibvorgang.
@@ -38,17 +54,6 @@ Diese Funktion lässt sich in der Datei *script.js* deaktivieren:
 * `const sicherheitskopien = true;` //eingeschaltet (Voreinstellung)
 * `const sicherheitskopien = false;` //ausgeschaltet
 
-## Installieren
-
-* Für den Betrieb sind ein Webserver und PHP erforderlich
-* Ein Webserver darf sicherheitstechnisch prinzipiell nur auf die Dateien innerhalb von *Document Root* zugreifen, deswegen müssen die zu bearbeitenden Bilder auch in diesem oder einem Unterverzeichnis liegen. 
-* Document Root und die Konstante *startverzeichnis* im Skript *script.js* müssen übereinstimmen. Bei Apache findet sich die Konfiguration von *Document Root* in der Datei *httpd.conf*. Im Detail: 
-    * Im JavaScirpt: `const startverzeichnis = 'C:/schnell-tagger/code';`
-    * In der Webserver-Konfiguration:
-        * `DocumentRoot "C:/schnell-tagger/code"`
-        * `<Directory "C:/schnell-tagger/code">`
-* Wer die Datei *index.html* anders benennt, beispielsweise als Teil einer größeren Anwendung, muss den zugehörigen Eintrag in *script.js* ändern, wegen der Funktion des Back-Buttons des Browsers. Hier fehlt noch eine automatische Erkennung.
-    * `const dateiHistory = "./index_xyz.html";`
 
 ## Alle IPTC-Felder ändern
 Das kann über die Datei *felder.ini* erfolgen, die alle Felder laut IPTC-Standard (https://de.wikipedia.org/wiki/IPTC-IIM-Standard) auflistet. 
