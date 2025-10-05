@@ -7,7 +7,7 @@ console.log('Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/
 
 
 //Konfiguration hier ändern
-const startverzeichnis: string = 'c:/web';//Wert nur ändern, wenn das Startverzeichnis ein anderes als das Dokumentenverzeichnis des Webservers sein soll. Dann hier das Dokumentenverzeichnis des Webservers angeben, z.B. c:/xampp/htdocs.  
+const startverzeichnis: string = '.';//Wert nur ändern, wenn die Datei index.html und die Skripte nicht direkt im Dokumentenverzeichnis des Webservers liegen, sondern in einem Unterverzeichnis. Dann hier das Dokumentenverzeichnis des Webservers angeben, z.B. c:/xampp/htdocs.   
 const dateiHistory: string = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
 const sicherheitskopien: boolean = true; //Sollen Sicherheitskopien gemacht werden? Voreinstellung ist ja (true)
 //const urheber: boolean = false; //Urhebereintrag in den Bildern? Siehe Readme.//Achtung funktioniert noch nicht!
@@ -261,6 +261,7 @@ class RahmenMitte {
         //HTML wird aufgebaut
         initiierung._aktuellesVerzeichnis._bilder.forEach((einBild: Bild) => {
 
+            console.log('Html-Pfad: ' + einBild._htmlPfad + ' Name: ' + einBild._name + ' ID: ' + einBild._id);
             htmlZumAnzeigen = htmlZumAnzeigen + '<img src="' + einBild._htmlPfad + '/' + einBild._name + '" alt="' + einBild._name + '" class="bild"' + ' id="' + einBild._id + '">';
 
         });

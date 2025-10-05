@@ -40,9 +40,9 @@ Vielleicht etwas altmodisch, aber die Webanwendung dient dazu, Stichwörter bzw.
 * Im Normalfall ist keine Konfiguration notwendig, wenn die Datei *index.html* und die Skripte direkt im Dokumenten-Ordner des Webserver liegen.  
 * Bei Apache findet sich die Konfiguration des Dokumenten-Ordners in der Datei *httpd.conf* als Eintrag *Document Root*, oft:
     * `DocumentRoot "C:/xampp/htdocs"`
-      `<Directory "C:/xampp/htdocs">`
+    * `<Directory "C:/xampp/htdocs">`
 * *Sonderfall:* Sollen die Schnell-Taggger-Skripte und Bilder in einem Unterordner liegen, so ist Pfad des Dokumenten-Ordners in die Konstante *startverzeichnis* im Skript *script.js* einzufügen, z.B.:
-    * Im JavaScirpt: `const startverzeichnis = 'C:/xampp/htdocs/';`
+    * Im JavaScirpt: `const startverzeichnis = 'C:/xampp/htdocs';`
 * *Sonderfall:* Wer die Datei *index.html* anders benennt, beispielsweise als Teil einer größeren Anwendung, muss den zugehörigen Eintrag in *script.js* ändern, wegen der Funktion des Back-Buttons des Browsers. Hier fehlt noch eine automatische Erkennung.
     * `const dateiHistory = "./index_xyz.html";`
 
