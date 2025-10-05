@@ -7,7 +7,7 @@ console.log('Schnell-Tagger Version 0.3.1; AGPL 3: https://www.gnu.org/licenses/
 
 
 //Konfiguration hier ändern
-const startverzeichnis: string = 'c:/web';//Muss mit dem Document Root des Webserversübereinstimmen 
+const startverzeichnis: string = '.';//Muss mit dem Document Root des Webserversübereinstimmen 
 const dateiHistory: string = "./index.html"; //Nur ändern, wenn der Dateiname nicht mehr index.html ist. Wichtig für den Back-Button des Browsers 
 const sicherheitskopien: boolean = true; //Sollen Sicherheitskopien gemacht werden? Voreinstellung ist ja (true)
 //const urheber: boolean = false; //Urhebereintrag in den Bildern? Siehe Readme.//Achtung funktioniert noch nicht!
